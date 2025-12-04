@@ -1,17 +1,23 @@
-from flask import Flask, send_from_directory
-import os
+from flask import Flask, render_template, request
 
-app = Flask(__name__, static_folder='frontend', static_url_path='')
+app = Flask(__name__)
+
 
 @app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    return render_template('register.html')
+    
+@app.route('/login', methods=['GET', 'POST'])
 def index():
-    return send_from_directory('frontend', 'index.html')
+    return render_template('login.html')
 
-@app.route('/<path:path>')
-def serve_static(path):
-    if os.path.exists(os.path.join('frontend', path)):
-        return send_from_directory('frontend', path)
-    return send_from_directory('frontend', 'index.html')
-
+@app.route('/settings', methods=['GET', 'POST'])
+def settings():
+    return render_template('settings.html')
+    
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=False)
