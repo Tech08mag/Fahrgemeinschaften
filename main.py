@@ -7,21 +7,25 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def home():
+def index():
     return render_template('index.html')
+
+@app.route('/home', methods=['GET', 'POST'])
+def home():
+    return render_template('home.html')
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     return render_template('register.html')
     
 @app.route('/login', methods=['GET', 'POST'])
-def index():
+def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         password_hash = hashing(password)
         print(f'Username: {username}')
-        print(f'Password: {password}')
+        print(f'Password: {password_hash}')
         return render_template('index.html')
     return render_template('login.html')
 
