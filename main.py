@@ -1,3 +1,6 @@
+from modules.passwords import hashing, verify
+
+
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
@@ -16,6 +19,7 @@ def index():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        password_hash = hashing(password)
         print(f'Username: {username}')
         print(f'Password: {password}')
         return render_template('index.html')
