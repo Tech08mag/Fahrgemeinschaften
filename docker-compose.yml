@@ -1,7 +1,7 @@
 services:
   postgres:
     container_name: container-pg
-    image: postgres
+    image: postgres:latest
     hostname: localhost
     ports:
       - "5432:5432"
@@ -15,7 +15,7 @@ services:
 
   pgadmin:
     container_name: container-pgadmin
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:latest
     depends_on:
       - postgres
     ports:

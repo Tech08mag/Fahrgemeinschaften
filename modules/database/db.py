@@ -1,8 +1,7 @@
 import os
 from dotenv import load_dotenv
-from sqlalchemy import URL, Table, Column, String, MetaData
-from sqlalchemy import create_engine
-from sqlalchemy.engine import result, insert
+from sqlalchemy import URL, Table, Column, Row, String, MetaData
+from sqlalchemy import create_engine, insert, select
 
 load_dotenv()
 
@@ -33,3 +32,9 @@ def insert_user(email_user: str, name_user: str, passwordhash_user: str):
     with engine.connect() as connection:
         connection.execute(statement1)
         connection.commit()
+
+def get_hashed_password_by_email(email_input: str):
+     with engine.connect() as connection:
+        query = Users.select().where(Users.columns.email == email_input)
+        output = connection.execute(query)
+        return output.fetchone()
