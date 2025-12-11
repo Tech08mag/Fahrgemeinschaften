@@ -1,4 +1,4 @@
-from modules.passwords import hashing, verify
+from modules.passwords import PW_HANDLER
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
@@ -21,7 +21,8 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        password_hash = hashing(password)
+        p1 = PW_HANDLER(password)
+        password_hash = p1.hashing()
         print(f'Username: {username}')
         print(f'Password: {password_hash}')
         return render_template('index.html')
