@@ -13,7 +13,7 @@ url_object = URL.create(
     database=os.getenv("PG_DATABASE"),
 )
 
-engine = create_engine(url_object, echo=True)
+engine = create_engine(url_object, echo=False)
 
 metadata_obj = MetaData()
 Users = Table(
@@ -25,7 +25,7 @@ Users = Table(
 )
 metadata_obj.create_all(engine)
 
-def insert_user(email_user: str, name_user: str, passwordhash_user: str):
+def insert_user_data(email_user: str, name_user: str, passwordhash_user: str):
     statement1 = insert(Users).values(email = email_user,
                                        name=name_user,
                                        passwordhash = passwordhash_user)

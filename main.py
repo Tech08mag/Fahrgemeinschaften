@@ -1,5 +1,5 @@
 from modules.passwords import PW_HANDLER
-from modules.database.db import insert_user, get_hashed_password_by_email
+from modules.database.db import insert_user_data, get_hashed_password_by_email
 
 import os
 from dotenv import load_dotenv
@@ -33,7 +33,7 @@ def register():
         if get_hashed_password_by_email(email) is None and password == password2:
             p1 = PW_HANDLER(password)
             password_hash = p1.hashing()
-            insert_user(email, username, password_hash)
+            insert_user_data(email, username, password_hash)
             return render_template('register.html', error="Success")
         else:
             return render_template('register.html', error="passwords do not match or your email is already in use")
@@ -57,6 +57,8 @@ def login():
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
+    if 'username' not in session:
+        return redirect(url_for('login'))
     return render_template('settings.html')
     
 @app.route('/logout')
