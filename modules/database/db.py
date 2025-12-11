@@ -20,7 +20,7 @@ metadata_obj = MetaData()
 Users = Table(
     'Users',                                        
     metadata_obj,                                    
-    Column('email', String, primary_key=True),  
+    Column('email', String),  
     Column('name', String, primary_key=True),                    
     Column('passwordhash', String),                
 )

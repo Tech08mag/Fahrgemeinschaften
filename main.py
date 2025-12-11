@@ -1,4 +1,6 @@
 from modules.passwords import PW_HANDLER
+from modules.database.db import insert_user
+
 from flask import Flask, render_template, request
 
 app = Flask(__name__)
@@ -14,6 +16,18 @@ def home():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if request.method == 'POST':
+        username: str = request.form['username']
+        email: str = request.form['email']
+        password: str = request.form['password']
+        password2: str = request.form['password2']
+        if password == password2:
+            p1 = PW_HANDLER(password)
+            password_hash = p1.hashing()
+            insert_user(email, username, password_hash)
+            return render_template('register.html', error="wrong password")
+        else:
+            return render_template('register.html', error="wrong password")
     return render_template('register.html')
     
 @app.route('/login', methods=['GET', 'POST'])
