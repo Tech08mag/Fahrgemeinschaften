@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy import URL, Table, Column, String, MetaData
 from sqlalchemy import create_engine
-from sqlalchemy.engine import result
+from sqlalchemy.engine import result, insert
 
 load_dotenv()
 
@@ -27,7 +27,9 @@ Users = Table(
 metadata_obj.create_all(engine)
 
 def insert_user(email_user: str, name_user: str, passwordhash_user: str):
-    statement1 = Users.insert().values(email = email_user,
+    statement1 = insert(Users).values(email = email_user,
                                        name=name_user,
                                        passwordhash = passwordhash_user)
-    engine.execute(statement1) # pyright: ignore[reportAttributeAccessIssue]
+    with engine.connect() as connection:
+        connection.execute(statement1)
+        connection.commit()
