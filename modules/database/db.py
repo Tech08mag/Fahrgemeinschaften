@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
-from sqlalchemy import URL, Table, Column, Row, String, MetaData
-from sqlalchemy import create_engine, insert, select
+from sqlalchemy import URL, Table, Column, String, MetaData
+from sqlalchemy import create_engine, insert
 
 load_dotenv()
 

@@ -25,13 +25,13 @@ def register():
         email: str = request.form['email']
         password: str = request.form['password']
         password2: str = request.form['password2']
-        if password == password2:
+        if get_hashed_password_by_email(email) is None and password == password2:
             p1 = PW_HANDLER(password)
             password_hash = p1.hashing()
             insert_user(email, username, password_hash)
             return render_template('register.html', error="Success")
         else:
-            return render_template('register.html', error="passwords do not match")
+            return render_template('register.html', error="passwords do not match or your email is already in use")
     return render_template('register.html')
     
 @app.route('/login', methods=['GET', 'POST'])
