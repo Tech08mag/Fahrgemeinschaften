@@ -1,10 +1,15 @@
 from modules.passwords import PW_HANDLER
 from modules.database.db import insert_user, get_hashed_password_by_email
 
+import os
+from dotenv import load_dotenv
+
 from flask import Flask, render_template, request, session, redirect, url_for
 
+load_dotenv()
+
 app = Flask(__name__)
-app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
 @app.route('/')
 def index():
