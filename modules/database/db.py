@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from sqlalchemy import URL, Table, Column, String, MetaData
+from sqlalchemy import URL, Table, Column, String, MetaData, UUID
 from sqlalchemy import create_engine, insert
 
 load_dotenv()
@@ -19,9 +19,10 @@ metadata_obj = MetaData()
 Users = Table(
     'Users',                                        
     metadata_obj,                                    
-    Column('email', String),  
-    Column('name', String, primary_key=True),                    
-    Column('passwordhash', String),                
+    Column('email', String, primary_key=True),  
+    Column('name', String),                    
+    Column('passwordhash', String),
+    Column("Settings", UUID)             
 )
 metadata_obj.create_all(engine)
 
