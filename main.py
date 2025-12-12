@@ -59,6 +59,9 @@ def login():
 def settings():
     if 'username' not in session:
         return redirect(url_for('login'))
+    if request.method == 'POST':
+            request_data = request.get_json()
+            
     return render_template('settings.html')
     
 @app.route('/logout')
