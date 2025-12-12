@@ -20,3 +20,6 @@ Extra‘s:
 
 Login:
 https://flowbite.com/blocks/marketing/login/
+
+Build Command:
+`docker build -t fahrgemeinschaften .`

@@ -2,7 +2,7 @@ services:
   postgres:
     container_name: container-pg
     image: postgres:latest
-    hostname: localhost
+    hostname: postgres
     ports:
       - "5432:5432"
     environment:
@@ -24,6 +24,14 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
     restart: unless-stopped
-
-volumes:
-  postgres-data:
+  
+  fahrgemeinschaften:
+    container_name: fahrgemeinschaften
+    image: fahrgemeinschaften:latest
+    depends_on:
+      - postgres
+    ports:
+    - 5000:5000
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
