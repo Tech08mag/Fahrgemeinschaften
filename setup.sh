@@ -20,5 +20,5 @@ sudo systemctl status docker
 sudo systemctl start docker
 sudo usermod -a -G docker $USER
 newgrp docker
-docker run hello-world
+docker build -t fahrgemeinschaften .
 docker compose up -d

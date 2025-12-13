@@ -1,11 +1,10 @@
 from modules.passwords import PW_HANDLER
-from modules.database.db import insert_user_data, get_hashed_password_by_email
+from modules.database.db import insert_user_data, get_hashed_password_by_email, wait_for_db, init_db
 
 import os
 from dotenv import load_dotenv
 
 from flask import Flask, render_template, request, session, redirect, url_for
-from modules.database.db import insert_user_data, get_hashed_password_by_email, wait_for_db, init_db
 
 # Initialize database connection and tables
 wait_for_db()
@@ -65,6 +64,8 @@ def settings():
         return redirect(url_for('login'))
     if request.method == 'POST':
             request_data = request.get_json()
+            if 'new_password' in request_data:
+                
             
     return render_template('settings.html')
     

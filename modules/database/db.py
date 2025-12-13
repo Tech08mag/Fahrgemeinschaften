@@ -2,7 +2,7 @@ import os
 import time
 from dotenv import load_dotenv
 from sqlalchemy import URL, Table, Column, String, MetaData, UUID
-from sqlalchemy import create_engine, insert
+from sqlalchemy import create_engine, insert, update
 from sqlalchemy.exc import OperationalError
 
 load_dotenv()
@@ -50,6 +50,17 @@ def insert_user_data(email_user: str, name_user: str, passwordhash_user: str):
     statement1 = insert(Users).values(email = email_user,
                                        name=name_user,
                                        passwordhash = passwordhash_user)
+    with engine.connect() as connection:
+        connection.execute(statement1)
+        connection.commit()
+
+def update_user_data(email_input: str, name_input: str | None = None, password_new: str | None = None, email_new: str | None = None, region_new: str | None = None):
+    values = {}
+    if name_input is not None:
+        values['name'] = name_input
+    if password_new is not None:
+        values['passwordhash'] = password_new
+    statement1 = update(Users).where(Users.columns.email == email_input).values(**values)
     with engine.connect() as connection:
         connection.execute(statement1)
         connection.commit()
