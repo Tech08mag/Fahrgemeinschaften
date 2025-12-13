@@ -1,7 +1,9 @@
 import os
+import time
 from dotenv import load_dotenv
 from sqlalchemy import URL, Table, Column, String, MetaData, UUID
 from sqlalchemy import create_engine, insert
+from sqlalchemy.exc import OperationalError
 
 load_dotenv()
 
@@ -9,7 +11,7 @@ url_object = URL.create(
     "postgresql+psycopg2",
     username=os.getenv("PG_USERNAME"),
     password=os.getenv("PG_PASSWORD"),
-    host=os.getenv("PG_HOST"),
+    host=os.getenv("PG_HOST", "postgres"),  # Default to 'postgres' for Docker
     database=os.getenv("PG_DATABASE"),
 )
 
@@ -24,7 +26,25 @@ Users = Table(
     Column('passwordhash', String),
     Column("Settings", UUID)             
 )
-metadata_obj.create_all(engine)
+
+def wait_for_db(retries: int = 30, delay: int = 2):
+    """Wait for database to be ready before proceeding."""
+    for attempt in range(retries):
+        try:
+            with engine.connect() as conn:
+                print("✓ Database connection successful")
+                return True
+        except OperationalError:
+            if attempt < retries - 1:
+                print(f"⏳ Waiting for database... (attempt {attempt + 1}/{retries})")
+                time.sleep(delay)
+            else:
+                print("✗ Failed to connect to database after retries")
+                raise
+
+def init_db():
+    """Initialize database tables after connection is established."""
+    metadata_obj.create_all(engine)
 
 def insert_user_data(email_user: str, name_user: str, passwordhash_user: str):
     statement1 = insert(Users).values(email = email_user,

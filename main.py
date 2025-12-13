@@ -5,7 +5,11 @@ import os
 from dotenv import load_dotenv
 
 from flask import Flask, render_template, request, session, redirect, url_for
+from modules.database.db import insert_user_data, get_hashed_password_by_email, wait_for_db, init_db
 
+# Initialize database connection and tables
+wait_for_db()
+init_db()
 load_dotenv()
 
 app = Flask(__name__)

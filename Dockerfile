@@ -29,11 +29,9 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 # Then, add the rest of the project source code and install it
 # Installing separately from its dependencies allows optimal layer caching
-COPY . /app
+COPY --chown=999:999 . /app
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked
-
-RUN chown -R 999:999 /app
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
 
@@ -42,4 +40,4 @@ ENTRYPOINT []
 
 # Use the non-root user to run our application
 USER nonroot
-CMD ["uv", "run", "main.py"]
+CMD ["python", "main.py"]
