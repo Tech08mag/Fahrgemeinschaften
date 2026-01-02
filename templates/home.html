@@ -8,6 +8,16 @@
     <script src="{{ url_for('static', filename='/js/home.js') }}"></script>
 </head>
 <body class="dark:bg-gray-800">
+    <nav>
+            <div class="p-6 space-y-4 md:space-y-4 sm:p-8">
+                <a class="text-sm font-light text-gray-500 dark:text-gray-400 hover:underline" href="/home">home</a>
+                <a class="text-sm font-light text-gray-500 dark:text-gray-400 hover:underline" href="/login">login</a>
+                <a class="text-sm font-light text-gray-500 dark:text-gray-400 hover:underline" href="/register">register</a>
+                 <a class="text-sm font-light text-gray-500 dark:text-gray-400 hover:underline" href="/mydrives">my Drives</a>
+                <a class="text-sm font-light text-gray-500 dark:text-gray-400 hover:underline" href="/settings">settings</a>
+                <a class="text-sm font-light text-gray-500 dark:text-gray-400 hover:underline" href="/logout">logout</a>
+            </div>
+          </nav>
     <section class="bg-gray-50 dark:bg-gray-900">
         <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
             <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">

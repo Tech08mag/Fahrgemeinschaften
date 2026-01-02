@@ -156,15 +156,22 @@ def disp():
         print(my_drives)
     return my_drives
 
-@app.route('/api/drive/<int:num>', methods=['GET'])
+@app.route('/drive/<int:num>', methods=['GET'])
 def drive(num):
+    if 'name' not in session:
+        return 'not logged in try loggin in'
+    else:
+        return render_template('drive.html', num=num)
+
+@app.route('/api/drive/<int:num>', methods=['GET'])
+def drive_api(num):
     if 'name' not in session:
         return 'not logged in try loggin in'
     else:
         stmt = select(Drive).where(Drive.id_drive == num)
         drive = session_db.execute(stmt).scalar_one_or_none()
         if drive:
-            drive_data = json.dumps(drive.__dict__, default=str)
+            drive_data = json.dumps([drive.__dict__ for drive in [drive]], default=str)
             return drive_data
         else:
             return jsonify({"error": "Drive not found"}), 404
