@@ -1,5 +1,6 @@
 from modules.passwords import PW_HANDLER
-import os, json
+import os
+import json
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
 from modules.db import User, Drive, Passenger
@@ -29,10 +30,10 @@ def index():
 
 @app.route('/create_route', methods=['GET', 'POST'])
 def create_route():
-    if 'username' not in session:
+    if 'name' not in session:
         return redirect(url_for('login'))
     if request.method == 'POST':
-        stmt = select(User).where(User.email.in_([session['username']]))
+        stmt = select(User).where(User.email.in_([session['email']]))
         column_data = session_db.execute(stmt).scalar_one_or_none()
         date: str = request.form['date']
         time: str = request.form['time']
@@ -64,12 +65,6 @@ def home():
     if 'name' not in session:
         return redirect(url_for('login'))
     else:
-        stmt = select(Drive)
-        all_drives = session_db.execute(stmt).scalars().all()
-        all_drives_string: str = ""
-        for drive in all_drives:
-            all_drives_string = f"{drive.organizer} fährt am {drive.date} um {drive.time} Uhr von {drive.startpoint} nach {drive.destination}. Die Fahrt kostet {drive.price} Euro. Es sind noch {drive.seat_amount} Plätze frei.\n"
-            flash(all_drives_string)
         return render_template('home.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -142,6 +137,13 @@ def logout():
     session.pop('email', None)
     return redirect(url_for('index'))
 
+@app.route('/api/all_drives', methods=['GET'])
+def all_drives():
+    stmt = select(Drive)
+    all_drives = session_db.execute(stmt).scalars().all()
+    all_drives = json.dumps([drive.__dict__ for drive in all_drives], default=str)
+    return all_drives
+
 @app.route('/api/my_drives', methods=['GET'])
 def disp():
     if 'name' not in session:
@@ -154,15 +156,22 @@ def disp():
         print(my_drives)
     return my_drives
 
-@app.route('/api/drive/<int:num>', methods=['GET'])
+@app.route('/drive/<int:num>', methods=['GET'])
 def drive(num):
+    if 'name' not in session:
+        return 'not logged in try loggin in'
+    else:
+        return render_template('drive.html', num=num)
+
+@app.route('/api/drive/<int:num>', methods=['GET'])
+def drive_api(num):
     if 'name' not in session:
         return 'not logged in try loggin in'
     else:
         stmt = select(Drive).where(Drive.id_drive == num)
         drive = session_db.execute(stmt).scalar_one_or_none()
         if drive:
-            drive_data = json.dumps(drive.__dict__, default=str)
+            drive_data = json.dumps([drive.__dict__ for drive in [drive]], default=str)
             return drive_data
         else:
             return jsonify({"error": "Drive not found"}), 404

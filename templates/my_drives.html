@@ -4,29 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Drives</title>
+    <script src="{{ url_for('static', filename='/js/my_drives.js') }}"></script>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>My Drives</h1>
-            <a href="{{ url_for('create_route') }}" class="btn btn-primary">Create New Drive</a>
-        </header>
-        <main>
-            {% if my_drives|length == 2 %}
-                <p>No drives found. <a href="{{ url_for('create_route') }}">Create a new drive</a>.</p>
-            {% else %}
-                <ul>
-                    {% for drive in my_drives%}
-                        <li>
-                            <h2>Drive to {{ drive.destination }} on {{ drive.date }} at {{ drive.time }}</h2>
-                            <p>Organizer: {{ drive.organizer }}</p>
-                            <p>Seats Available: {{ drive.seats_available }}</p>
-                            <a href="{{ url_for('view_drive', drive_id=drive.id) }}" class="btn btn-secondary">View Details</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% endif %}
-        </main>
-    </div>
+    <header>
+        <h1>My Drives</h1>
+        <a href="{{ url_for('create_route') }}" class="btn btn-primary">Create New Drive</a>
+    </header>
+    <main>
+        <ul id="drives-list">
+        </ul>
+    </main>
 </body>
 </html>
