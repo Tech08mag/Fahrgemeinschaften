@@ -19,9 +19,10 @@ getmydrives()
     drives.forEach(drive => {
         const li = document.createElement('li');
         li.innerHTML = `
-            <h2>Drive to ${drive.destination} on ${drive.date} at ${drive.time}</h2>
-            <p>Organizer: ${drive.organizer}</p>
-            <p>Seats Available: ${drive.seats_available}</p>
+            <h2>Fahrt nach ${drive.destination} am ${drive.date} um ${drive.time} Uhr von ${drive.startpoint}</h2>
+            <p>Veranstalter: ${drive.organizer}</p>
+            <p>Plaetze: ${drive.seat_amount}</p>
+            <p>Preis: ${drive.price} Euro</p>
         `;
         drivesList.appendChild(li);
     });
