@@ -65,12 +65,6 @@ def home():
     if 'name' not in session:
         return redirect(url_for('login'))
     else:
-        stmt = select(Drive)
-        all_drives = session_db.execute(stmt).scalars().all()
-        all_drives_string: str = ""
-        for drive in all_drives:
-            all_drives_string = f"{drive.organizer} fährt am {drive.date} um {drive.time} Uhr von {drive.startpoint} nach {drive.destination}. Die Fahrt kostet {drive.price} Euro. Es sind noch {drive.seat_amount} Plätze frei.\n"
-            flash(all_drives_string)
         return render_template('home.html')
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -142,6 +136,13 @@ def logout():
     session.pop('name', None)
     session.pop('email', None)
     return redirect(url_for('index'))
+
+@app.route('/api/all_drives', methods=['GET'])
+def all_drives():
+    stmt = select(Drive)
+    all_drives = session_db.execute(stmt).scalars().all()
+    all_drives = json.dumps([drive.__dict__ for drive in all_drives], default=str)
+    return all_drives
 
 @app.route('/api/my_drives', methods=['GET'])
 def disp():

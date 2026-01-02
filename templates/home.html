@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <title>Home</title>
+    <script src="{{ url_for('static', filename='/js/home.js') }}"></script>
 </head>
 <body class="dark:bg-gray-800">
     <section class="bg-gray-50 dark:bg-gray-900">
@@ -18,15 +19,7 @@
                     <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                         Fahrtenübersicht
                     </h1>
-                    <div>
-                        {% with messages = get_flashed_messages() %}
-                            {% if messages %}
-                                {% for message in messages %}
-                                    <p class="text-sm font-bold leading-tight tracking-tight text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded p-3">{{ message }}</p>
-                                {% endfor %}</p>
-                            {% endif %}
-                        {% endwith %}
-                    </div>
+                    <div id="drives-list"></div>
                 </div>
             </div>
         </div>
