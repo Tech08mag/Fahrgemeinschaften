@@ -1,5 +1,6 @@
 from modules.passwords import PW_HANDLER
-import os, json
+import os
+import json
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
 from modules.db import User, Drive, Passenger
@@ -29,10 +30,10 @@ def index():
 
 @app.route('/create_route', methods=['GET', 'POST'])
 def create_route():
-    if 'username' not in session:
+    if 'name' not in session:
         return redirect(url_for('login'))
     if request.method == 'POST':
-        stmt = select(User).where(User.email.in_([session['username']]))
+        stmt = select(User).where(User.email.in_([session['email']]))
         column_data = session_db.execute(stmt).scalar_one_or_none()
         date: str = request.form['date']
         time: str = request.form['time']
