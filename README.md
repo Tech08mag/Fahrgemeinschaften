@@ -26,10 +26,6 @@ Extra‘s:
 - docker compose with database
 - setup.sh to install docker on ubuntu based distro's and build the image and start the docker compose.yml
 
-## Issues
-
-~~- duplicates of routes when logout and login again~~
-
 ## To Do
 
 - [ ] Filters for the drives
@@ -56,7 +52,7 @@ FLASK_SECRET_KEY=
 ```
 
 then you have to make sure to fill it with values. 
-The you need to give permissions to execute the setup.sh file.
+Then you need to give permissions to execute the setup.sh file.
 
 ```sh
 chmod +x setup.sh
@@ -87,12 +83,7 @@ docker compose up -d
 
 ## Ressources
 
-Login:
-<https://flowbite.com/blocks/marketing/login/>
-
-
-
 ## Credits
 
-- Logo made by [MagierderSteine](https://github.com/MagierderSteine?tab=overview&from=2025-12-01&to=2025-12-25)
+- Logo made by [MagierderSteine](https://github.com/MagierderSteine)
 
