@@ -34,6 +34,7 @@ Extra‘s:
 
 - [ ] Filters for the drives
 - [ ] Edit route page
+- [ ] option Delete Drive
 
 
 ## getting started

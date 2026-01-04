@@ -161,7 +161,7 @@ def drive(num):
     if 'name' not in session:
         return 'not logged in try loggin in'
     else:
-        return render_template('drive.html', num=num)
+        return render_template('drive.html', drive_id=num)
 
 @app.route('/api/drive/<int:num>', methods=['GET'])
 def drive_api(num):
