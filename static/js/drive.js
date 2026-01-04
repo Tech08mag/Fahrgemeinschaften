@@ -23,7 +23,7 @@ getdrive()
             <div id="drives-list" class="text-sm font-bold leading-tight tracking-tight text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded p-3">
             <h2>Fahrt nach ${drive.destination} am ${drive.date} um ${drive.time} Uhr von ${drive.startpoint}</h2>
             <p>Veranstalter: ${drive.organizer}</p>
-            <p>Plaetze: ${drive.seat_amount}</p>
+            <p>Plätze: ${drive.seat_amount}</p>
             <p>Preis: ${drive.price} Euro</p>
             <p>Link: <a href="/drive/${drive.id_drive}">Details</a></p>
             </div>

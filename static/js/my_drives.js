@@ -21,7 +21,7 @@ getmydrives()
         li.innerHTML = `
             <h2>Fahrt nach ${drive.destination} am ${drive.date} um ${drive.time} Uhr von ${drive.startpoint}</h2>
             <p>Veranstalter: ${drive.organizer}</p>
-            <p>Plaetze: ${drive.seat_amount}</p>
+            <p>Plätze: ${drive.seat_amount}</p>
             <p>Preis: ${drive.price} Euro</p>
         `;
         drivesList.appendChild(li);
