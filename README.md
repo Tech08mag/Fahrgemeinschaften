@@ -34,6 +34,9 @@ Extra‘s:
 
 - [ ] Filters for the drives
 - [ ] Edit route page
+- [ ] option Delete Drive/User
+- [ ] automaticly assign users to drives based on their locactions, prefer the users with least detour
+- [ ] scedule drives (Monday, Thursday, Saturday) repete for a period of time
 
 
 ## getting started
