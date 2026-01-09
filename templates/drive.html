@@ -1,21 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drives</title>
+    <title>Fahrt bearbeiten – Fahrgemeinschaften</title>
     <script>
         const DRIVE_ID = {{ drive_id }};
     </script>
     <script src="{{ url_for('static', filename='/js/drive.js') }}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
-<body>
-    <header>
-        <h1>Drive</h1>
-    </header>
-    <main>
-        <p id="drive">
-        </p>
-    </main>
+
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+
+<!-- Header -->
+<header class="bg-white dark:bg-gray-800 shadow">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+        <h1 class="text-3xl font-bold text-blue-600 dark:text-blue-400">
+            Fahrt bearbeiten
+        </h1>
+    </div>
+</header>
+
+<main class="max-w-3xl mx-auto px-6 py-10">
+
+    <!-- Editable Drive Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 space-y-6">
+
+        <h2 class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+            Fahrt Details
+        </h2>
+
+        <form id="drive-form" class="space-y-4">
+
+            <!-- Date -->
+            <div>
+                <label class="block mb-1 text-sm font-medium">Datum</label>
+                <input type="date" name="date" id="date"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600
+                           bg-gray-50 dark:bg-gray-700 px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+
+            <!-- Time -->
+            <div>
+                <label class="block mb-1 text-sm font-medium">Uhrzeit</label>
+                <input type="time" name="time" id="time"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600
+                           bg-gray-50 dark:bg-gray-700 px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+
+            <!-- Start -->
+            <div>
+                <label class="block mb-1 text-sm font-medium">Startpunkt</label>
+                <input type="text" name="startpoint" id="startpoint"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600
+                           bg-gray-50 dark:bg-gray-700 px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+
+            <!-- Destination -->
+            <div>
+                <label class="block mb-1 text-sm font-medium">Ziel</label>
+                <input type="text" name="destination" id="destination"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600
+                           bg-gray-50 dark:bg-gray-700 px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+
+            <!-- Seats -->
+            <div>
+                <label class="block mb-1 text-sm font-medium">Freie Plätze</label>
+                <input type="number" name="seats" id="seats" min="1"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600
+                           bg-gray-50 dark:bg-gray-700 px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+
+            <!-- Price -->
+            <div>
+                <label class="block mb-1 text-sm font-medium">Preis (€)</label>
+                <input type="number" name="price" id="price" min="0" step="any"
+                    class="w-full rounded-lg border border-gray-300 dark:border-gray-600
+                           bg-gray-50 dark:bg-gray-700 px-3 py-2
+                           focus:outline-none focus:ring-2 focus:ring-blue-600">
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex gap-3 mt-4">
+                <button type="submit"
+                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg px-5 py-2.5 transition">
+                    Speichern
+                </button>
+                <a href="/mydrives"
+                    class="flex-1 text-center bg-gray-300 hover:bg-gray-400 text-gray-800 font-medium rounded-lg px-5 py-2.5 transition dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600">
+                    Abbrechen
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+</main>
+
+<script>
+    // Example: populate fields from JS object
+    // Assume `drive` object is fetched via drive.js
+    document.addEventListener("DOMContentLoaded", () => {
+        if (window.drive) {
+            document.getElementById("date").value = drive.date;
+            document.getElementById("time").value = drive.time;
+            document.getElementById("startpoint").value = drive.startpoint;
+            document.getElementById("destination").value = drive.destination;
+            document.getElementById("seats").value = drive.seats;
+            document.getElementById("price").value = drive.price;
+        }
+
+        document.getElementById("drive-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            // gather updated data
+            const updatedDrive = {
+                date: document.getElementById("date").value,
+                time: document.getElementById("time").value,
+                startpoint: document.getElementById("startpoint").value,
+                destination: document.getElementById("destination").value,
+                seats: document.getElementById("seats").value,
+                price: document.getElementById("price").value
+            };
+            // send to backend (example POST request)
+            const res = await fetch(`/drives/${DRIVE_ID}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedDrive)
+            });
+            if (res.ok) {
+                alert("Fahrt erfolgreich aktualisiert!");
+            } else {
+                alert("Fehler beim Aktualisieren der Fahrt.");
+            }
+        });
+    });
+</script>
+
 </body>
 </html>

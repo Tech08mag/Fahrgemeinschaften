@@ -1,41 +1,93 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <title>Settings</title>
+    <title>Einstellungen – Fahrgemeinschaften</title>
 </head>
-<body class="dark:bg-gray-800">
-    <section class="bg-gray-50 dark:bg-gray-900">
-      <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-          <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-              <img class="w-8 h-8 mr-2" src="/static/images/Fahrgemeinschaften.png" alt="logo">
-              Einstellungen    
-          </a>
-          <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-              <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                  <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                     Nutzer
-                  </h1>
-                  <form class="space-y-4 md:space-y-6" method="post">
-                        <div>
-                            <label for="user" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">neuer Nutzername: </label>
-                            <input type="text" name="user" id="user" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-0 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:ring-offset-0 dark:focus:border-blue-500" placeholder="name">
-                        </div>
-                        <div>
-                            <label for="password-old" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">momentanes Passwort: </label>
-                            <input type="password" name="password-old" id="password-old" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-0 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:ring-offset-0 dark:focus:border-blue-500" placeholder="momentanes Passwort">
-                        </div>
-                      <div>
-                            <label for="password-new" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">neues Passwort: </label>
-                            <input type="password" name="password-new" id="password-new" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-0 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:ring-offset-0 dark:focus:border-blue-500" placeholder="neues Passwort">
-                      </div>
-                      <button type="submit" class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">speichern</button>
-                    </form>
-              </div>
+
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+
+<section class="min-h-screen flex items-center justify-center px-6 py-10">
+
+    <div class="w-full max-w-lg">
+
+        <!-- Brand -->
+        <div class="flex justify-center mb-6">
+            <a href="/home" class="flex items-center gap-2 text-2xl font-semibold text-blue-600 dark:text-blue-400">
+                <img src="/static/images/Fahrgemeinschaften.png" class="w-8 h-8" alt="logo">
+                Fahrgemeinschaften
+            </a>
+        </div>
+
+        <!-- Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+
+            <div class="p-6 space-y-6">
+
+                <!-- Header -->
+                <div>
+                    <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                        Einstellungen
+                    </h1>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Nutzerdaten verwalten
+                    </p>
+                </div>
+
+                <!-- Form -->
+                <form method="post" class="space-y-4">
+
+                    <!-- Username -->
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">
+                            Neuer Nutzername
+                        </label>
+                        <input type="text" name="user" placeholder="Benutzername"
+                            class="w-full rounded-lg border border-gray-300 dark:border-gray-600
+                                   bg-gray-50 dark:bg-gray-700 px-3 py-2
+                                   focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    </div>
+
+                    <!-- Old password -->
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">
+                            Aktuelles Passwort
+                        </label>
+                        <input type="password" name="password-old" placeholder="Aktuelles Passwort"
+                            class="w-full rounded-lg border border-gray-300 dark:border-gray-600
+                                   bg-gray-50 dark:bg-gray-700 px-3 py-2
+                                   focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    </div>
+
+                    <!-- New password -->
+                    <div>
+                        <label class="block mb-1 text-sm font-medium">
+                            Neues Passwort
+                        </label>
+                        <input type="password" name="password-new" placeholder="Neues Passwort"
+                            class="w-full rounded-lg border border-gray-300 dark:border-gray-600
+                                   bg-gray-50 dark:bg-gray-700 px-3 py-2
+                                   focus:outline-none focus:ring-2 focus:ring-blue-600">
+                    </div>
+
+                    <!-- Submit -->
+                    <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700
+                               text-white font-medium rounded-lg
+                               px-5 py-2.5 transition">
+                        Änderungen speichern
+                    </button>
+
+                </form>
+
             </div>
-      </div>
-    </section>
+        </div>
+    </div>
+
+</section>
+
 </body>
 </html>

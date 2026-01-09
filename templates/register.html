@@ -3,51 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <title>Login</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <title>Registrieren – Fahrgemeinschaften</title>
 </head>
-<body class="dark:bg-gray-800">
-<section class="bg-gray-50 dark:bg-gray-900">
-  <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-      <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-          <img class="w-8 h-8 mr-2" src="/static/images/Fahrgemeinschaften.png" alt="logo">
-          Fahrgemeinschaften    
-      </a>
-      <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-          <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                  Registrieren
-              </h1>
-              <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-red">
-                {% with messages = get_flashed_messages() %}
-                    {% if messages %}
-                        {% for message in messages %}
-                            <p class="text-sm font-bold leading-tight tracking-tight text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded p-3">{{ message }}</p>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-              </h1>
-              <form class="space-y-4 md:space-y-6"  method="post">
-                  <div>
-                      <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Dein Nutzer: </label>
-                      <input type="text" name="username" id="user" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-0 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:ring-offset-0 dark:focus:border-blue-500" placeholder="name" required="">
-                  </div>
-                  <div>
-                      <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Deine Email</label>
-                      <input type="email" name="email" id="email" placeholder="mail@mail.com" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-0 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:ring-offset-0 dark:focus:border-blue-500" required="">
-                  </div>
-                  <div>
-                      <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Passwort</label>
-                      <input type="password" name="password" id="password" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-0 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:ring-offset-0 dark:focus:border-blue-500" required="">
-                  </div>
-                  <div>
-                      <label for="password2" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Passwort bestätigen</label>
-                      <input type="password" name="password2" id="password2" placeholder="••••••••" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-0 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:ring-offset-0 dark:focus:border-blue-500" required="">
-                  </div>
-                  <button type="submit" class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">registrieren</button>
-              </form>
-          </div>
-      </div>
-  </div>
-</section>
+
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+
+<!-- HEADER / BRAND -->
+<header class="py-8 text-center">
+    <a href="/home" class="inline-flex items-center gap-2 text-2xl font-semibold text-blue-600 dark:text-blue-400">
+        <img src="/static/images/Fahrgemeinschaften.png" class="w-8 h-8" alt="logo">
+        Fahrgemeinschaften
+    </a>
+</header>
+
+<!-- REGISTER CARD -->
+<main class="flex items-center justify-center px-6">
+    <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+
+        <div class="p-8 space-y-6">
+            <h1 class="text-3xl font-bold text-center text-blue-600 dark:text-blue-400">
+                Registrieren
+            </h1>
+
+            <!-- FLASH MESSAGES -->
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="rounded-lg border border-red-200 dark:border-red-700 bg-red-50 dark:bg-red-900/30 p-4 text-sm text-red-800 dark:text-red-200">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- FORM -->
+            <form method="POST" class="space-y-5">
+
+                <div>
+                    <label for="username" class="block mb-2 text-sm font-medium">
+                        Nutzername
+                    </label>
+                    <input
+                        type="text"
+                        name="username"
+                        id="username"
+                        placeholder="Dein Nutzername"
+                        required
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 p-2.5
+                               focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-500"
+                    >
+                </div>
+
+                <div>
+                    <label for="email" class="block mb-2 text-sm font-medium">
+                        Email
+                    </label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        placeholder="mail@mail.com"
+                        required
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 p-2.5
+                               focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-500"
+                    >
+                </div>
+
+                <div>
+                    <label for="password" class="block mb-2 text-sm font-medium">
+                        Passwort
+                    </label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="••••••••"
+                        required
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 p-2.5
+                               focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-500"
+                    >
+                </div>
+
+                <div>
+                    <label for="password2" class="block mb-2 text-sm font-medium">
+                        Passwort bestätigen
+                    </label>
+                    <input
+                        type="password"
+                        name="password2"
+                        id="password2"
+                        placeholder="••••••••"
+                        required
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 p-2.5
+                               focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-500"
+                    >
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full rounded-lg bg-blue-600 py-2.5 font-medium text-white hover:bg-blue-700 transition">
+                    Registrieren
+                </button>
+
+                <p class="text-center text-sm text-gray-500 dark:text-gray-400">
+                    Bereits einen Account?
+                    <a href="/login" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                        Jetzt einloggen
+                    </a>
+                </p>
+
+            </form>
+        </div>
+    </div>
+</main>
+
 </body>
+</html>
