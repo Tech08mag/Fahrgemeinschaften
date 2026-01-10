@@ -53,11 +53,9 @@ def my_drives():
     if 'name' not in session:
         return redirect(url_for('login'))
     else:
-        stmt = select(Drive).where(Drive.organizer == session['name'])
-        my_drives = session_db.execute(stmt).scalars().all()
-        print(my_drives)
+        latest_drives = Drive.query.order_by(Drive.date.desc()).limit(10).all()
+        my_drives = session_db.execute(latest_drives).scalars().all()
         my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
-        print(my_drives)
         return render_template('my_drives.html', my_drives=my_drives)
 
 @app.route('/home', methods=['GET', 'POST'])
@@ -65,7 +63,10 @@ def home():
     if 'name' not in session:
         return redirect(url_for('login'))
     else:
-        return render_template('home.html')
+        stmt = select(Drive)
+        my_drives = session_db.execute(stmt).scalars().all()
+        my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
+        return render_template('home.html', my_drives=my_drives)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
