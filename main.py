@@ -163,18 +163,70 @@ def drive(num):
     else:
         return render_template('drive.html', drive_id=num)
 
-@app.route('/api/drive/<int:num>', methods=['GET'])
-def drive_api(num):
+from flask import request, jsonify, session
+from sqlalchemy import select
+
+@app.route('/api/drive/<int:id>', methods=['GET', 'PUT'])
+def drive_api(id):
+    # Auth check
     if 'name' not in session:
-        return 'not logged in try loggin in'
-    else:
-        stmt = select(Drive).where(Drive.id_drive == num)
-        drive = session_db.execute(stmt).scalar_one_or_none()
-        if drive:
-            drive_data = json.dumps([drive.__dict__ for drive in [drive]], default=str)
-            return drive_data
-        else:
+        return jsonify({"error": "Not logged in"}), 401
+
+    # ---------- PUT ----------
+    if request.method == 'PUT':
+        data = request.get_json()
+
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
+
+        drive = session_db.get(Drive, id)
+
+        if not drive:
             return jsonify({"error": "Drive not found"}), 404
+
+        # Optional: block updating primary key
+        data.pop("id_drive", None)
+
+        for field, value in data.items():
+            if hasattr(drive, field):
+                setattr(drive, field, value)
+
+        session_db.commit()
+
+        return jsonify({
+            "status": "success",
+            "drive": {
+                "id_drive": drive.id_drive,
+                "organizer": drive.organizer,
+                "date": drive.date,
+                "time": drive.time,
+                "price": float(drive.price) if drive.price else None,
+                "seat_amount": drive.seat_amount,
+                "startpoint": drive.startpoint,
+                "destination": drive.destination,
+                "osmlink": drive.osmlink
+            }
+        }), 200
+
+    # ---------- GET ----------
+    stmt = select(Drive).where(Drive.id_drive == id)
+    drive = session_db.execute(stmt).scalar_one_or_none()
+
+    if not drive:
+        return jsonify({"error": "Drive not found"}), 404
+
+    return jsonify({
+        "id_drive": drive.id_drive,
+        "organizer": drive.organizer,
+        "date": drive.date,
+        "time": drive.time,
+        "price": float(drive.price) if drive.price else None,
+        "seat_amount": drive.seat_amount,
+        "startpoint": drive.startpoint,
+        "destination": drive.destination,
+        "osmlink": drive.osmlink
+    }), 200
+
 
 @app.errorhandler(404)
 def not_found(e):

@@ -8,12 +8,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             const drive = await response.json();
             console.log('Drive Data:', drive);
 
-            document.getElementById("date").value = drive[0].date;
-            document.getElementById("time").value = drive[0].time;
-            document.getElementById("startpoint").value = drive[0].startpoint;
-            document.getElementById("destination").value = drive[0].destination;
-            document.getElementById("seats").value = drive[0].seat_amount;
-            document.getElementById("price").value = drive[0].price;
+            document.getElementById("date").value = drive.date;
+            document.getElementById("time").value = drive.time;
+            document.getElementById("startpoint").value = drive.startpoint;
+            document.getElementById("destination").value = drive.destination;
+            document.getElementById("seats").value = drive.seat_amount;
+            document.getElementById("price").value = drive.price;
 
             return drive;
 
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
 
         try {
-            const res = await fetch(`/drives/${DRIVE_ID}`, {
+            const res = await fetch(`/api/drive/${DRIVE_ID}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(updatedDrive)
