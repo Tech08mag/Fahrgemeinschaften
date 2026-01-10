@@ -1,33 +1,60 @@
-async function getdrive() {
-    try {
-        const response = await fetch('/api/drive/' + DRIVE_ID);
-        if (response.ok) {
-            const data = await response.json();
-            window.myDrivesData = data;
-            console.log('Drive Data:', data);
-            return data;
-        } else {
-            throw new Error('Failed to fetch data');
-        }
-    } catch (error) {
-        console.error('Error:', error); 
-    }
-}
+document.addEventListener("DOMContentLoaded", async () => {
+    // Fetch and populate the form
+    async function getdrive() {
+        try {
+            const response = await fetch('/api/drive/' + DRIVE_ID);
+            if (!response.ok) throw new Error('Failed to fetch drive data');
 
-getdrive()
-.then((drives) => {
-    const drivesList = document.getElementById('drive');
-    drives.forEach(drive => {
-        const paragraph = document.createElement('p');
-        paragraph.innerHTML = `
-            <div id="drives-list" class="text-sm font-bold leading-tight tracking-tight text-gray-900 dark:text-white border border-gray-300 dark:border-gray-600 rounded p-3">
-            <h2>Fahrt nach ${drive.destination} am ${drive.date} um ${drive.time} Uhr von ${drive.startpoint}</h2>
-            <p>Veranstalter: ${drive.organizer}</p>
-            <p>Plätze: ${drive.seat_amount}</p>
-            <p>Preis: ${drive.price} Euro</p>
-            <p>Link: <a href="/drive/${drive.id_drive}">Details</a></p>
-            </div>
-        `;
-        drivesList.appendChild(paragraph);
+            const drive = await response.json();
+            console.log('Drive Data:', drive);
+
+            document.getElementById("date").value = drive.date;
+            document.getElementById("time").value = drive.time;
+            document.getElementById("startpoint").value = drive.startpoint;
+            document.getElementById("destination").value = drive.destination;
+            document.getElementById("seats").value = drive.seat_amount;
+            document.getElementById("price").value = drive.price;
+
+            return drive;
+
+        } catch (error) {
+            console.error(error);
+            alert("Fehler beim Laden der Fahrt.");
+        }
+    }
+
+    await getdrive();
+
+    // Handle form submission
+    document.getElementById("drive-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        
+
+        const updatedDrive = {
+            date: document.getElementById("date").value,
+            time: document.getElementById("time").value,
+            startpoint: document.getElementById("startpoint").value,
+            destination: document.getElementById("destination").value,
+            seats: document.getElementById("seats").value,
+            price: document.getElementById("price").value
+        };
+
+        try {
+            const res = await fetch(`/api/drive/${DRIVE_ID}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedDrive)
+            });
+
+            if (res.ok) {
+                alert("Fahrt erfolgreich aktualisiert!");
+                window.location.href = "/home";
+            } else {
+                throw new Error("Update fehlgeschlagen");
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Fehler beim Aktualisieren der Fahrt.");
+        }
     });
-})
+});

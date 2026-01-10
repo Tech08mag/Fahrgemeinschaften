@@ -3,52 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>neue Fahrt</title>
+    <script>
+        const DRIVE_ID = {{ drive_id }};
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <title>Login</title>
 </head>
-<body class="dark:bg-gray-800">
-<section class="bg-gray-50 dark:bg-gray-900">
-  <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-      <a href="#" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-          <img class="w-8 h-8 mr-2" src="/static/images/Fahrgemeinschaften.png" alt="logo">
-          Fahrgemeinschaften    
-      </a>
-      <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-          <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                  Erstelle eine Fahrt
-              </h1>
-              {{error}}
-              <form class="space-y-4 md:space-y-6" method="POST">
-                  <div>
-                      <label for="date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Datum: </label>
-                      <input type="date" name="date" id="email" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-0 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:ring-offset-0 dark:focus:border-blue-500" required="">
-                  </div>
-                  <div>
-                    <label for="time" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Uhrzeit</label>
-                    <input type="time" name="time" id ="time" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-0 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:ring-offset-0 dark:focus:border-blue-500" placeholder="time" required="">
-                  </div>
-                   <div>
-                      <label for="price" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Preis: </label>
-                      <input type="number" min="0" step="any" name="price" id="price" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-0 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:ring-offset-0 dark:focus:border-blue-500" placeholder="00.00">
-                  </div>
-                  <div>
-                    <label for="seats" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Anzahl der freien Plätze</label>
-                    <input type="number" min="1" step="any" name="seats" id ="seats" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-0 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:ring-offset-0 dark:focus:border-blue-500" placeholder="Anzahl" required="">
-                  </div>
-                  <div>
-                    <label for="startpoint" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Startpunkt</label>
-                    <input type="text" name="startpoint" id ="startpoint" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-0 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:ring-offset-0 dark:focus:border-blue-500" placeholder="Startpunkt"required="">
-                  </div>
-                  <div>
-                    <label for="destination" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Ziel</label>
-                    <input type="text" name="destination" id ="destination" class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-0 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:ring-offset-0 dark:focus:border-blue-500" placeholder="Ziel" required="">
-                  </div>
-                  <button type="submit" class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">erstellen</button>
-              </form>
-          </div>
-      </div>
-  </div>
-</section>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+
+<!-- NAVBAR -->
+<header class="bg-white dark:bg-gray-800 shadow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+
+        <!-- Brand -->
+        <a href="/home" class="flex items-center gap-2 text-lg sm:text-xl font-semibold text-blue-600 dark:text-blue-400">
+            <img src="/static/images/Fahrgemeinschaften.png" class="w-8 h-8" alt="logo">
+            Fahrgemeinschaften
+        </a>
+
+        <!-- Desktop Nav -->
+        <nav class="hidden md:flex gap-6 text-sm font-medium">
+            <a href="/home" class="text-blue-600 dark:text-blue-400 font-semibold">Home</a>
+            <a href="/mydrives" class="hover:text-blue-600 dark:hover:text-blue-400">My Drives</a>
+            <a href="/settings" class="hover:text-blue-600 dark:hover:text-blue-400">Settings</a>
+            <a href="/logout" class="text-red-500 hover:text-red-600">Logout</a>
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <button id="menuBtn" class="md:hidden text-gray-700 dark:text-gray-200">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <nav class="flex flex-col px-6 py-4 space-y-3 text-sm font-medium">
+            <a href="/home" class="text-blue-600 font-semibold">Home</a>
+            <a href="/mydrives" class="hover:text-blue-600">My Drives</a>
+            <a href="/settings" class="hover:text-blue-600">Settings</a>
+            <a href="/logout" class="text-red-500 hover:text-red-600">Logout</a>
+        </nav>
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
+<main class="max-w-md mx-auto px-6 py-10">
+
+    <h1 class="text-2xl font-bold text-blue-600 dark:text-blue-400 mb-6">
+        neue Fahrt
+    </h1>
+
+    <form id="drive-form" method="post" class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
+
+        <div>
+            <label class="block text-sm font-medium mb-1">Datum</label>
+            <input type="date" id="date" name="date" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">Uhrzeit</label>
+            <input type="time" id="time" name="time" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">Startpunkt</label>
+            <input type="text" id="startpoint" name="startpoint" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">Ziel</label>
+            <input type="text" id="destination" name="destination" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">Freie Plätze</label>
+            <input type="number" id="seats" min="1" name="seats" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600">
+        </div>
+
+        <div>
+            <label class="block text-sm font-medium mb-1">Preis (€)</label>
+            <input type="number" id="price" min="0" step="any" name="price" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600">
+        </div>
+
+        <div class="flex gap-3 mt-4">
+            <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded px-5 py-2.5">Speichern</button>
+            <a href="/mydrives" class="flex-1 text-center bg-gray-300 hover:bg-gray-400 rounded px-5 py-2.5 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600">Abbrechen</a>
+        </div>
+
+    </form>
+
+</main>
+
+<!-- Mobile Menu Script -->
+<script>
+    const btn = document.getElementById('menuBtn');
+    const menu = document.getElementById('mobileMenu');
+    btn.addEventListener('click', () => menu.classList.toggle('hidden'));
+</script>
+
 </body>
 </html>

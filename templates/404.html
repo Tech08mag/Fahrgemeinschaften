@@ -1,33 +1,98 @@
-<!-- filepath: /home/tech08mag/Documents/Code/Fahrgemeinschaften/templates/404.html -->
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <title>404 - Page Not Found</title>
+    <title>404 – Seite nicht gefunden</title>
 </head>
-<body class="dark:bg-gray-800">
-    <section class="bg-gray-50 dark:bg-gray-900">
-        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-            <a href="/" class="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white">
-                <img class="w-8 h-8 mr-2" src="/static/images/Fahrgemeinschaften.png" alt="logo">
-                Seite konnte nicht gefunden werden
-            </a>
-            <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                    <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                        404 - Seite nicht gefunden
-                    </h1>
-                    <p class="text-sm text-gray-600 dark:text-gray-400">
-                        Die angeforderte Seite existiert leider nicht.
-                    </p>
-                    <a href="/" class="w-full bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center text-white dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                        Zur Startseite
-                    </a>
+
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+
+<!-- NAVBAR -->
+<header class="bg-white dark:bg-gray-800 shadow">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+
+        <!-- Brand -->
+        <a href="/" class="flex items-center gap-2 text-lg sm:text-xl font-semibold text-blue-600 dark:text-blue-400">
+            <img src="/static/images/Fahrgemeinschaften.png" class="w-8 h-8" alt="logo">
+            Fahrgemeinschaften
+        </a>
+
+        <!-- Desktop Nav -->
+        <nav class="hidden md:flex gap-6 text-sm font-medium">
+            <a href="/" class="text-blue-600 dark:text-blue-400 font-semibold">Home</a>
+            <a href="/mydrives" class="hover:text-blue-600 dark:hover:text-blue-400">My Drives</a>
+            <a href="/settings" class="hover:text-blue-600 dark:hover:text-blue-400">Settings</a>
+            <a href="/logout" class="text-red-500 hover:text-red-600">Logout</a>
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <button id="menuBtn" class="md:hidden text-gray-700 dark:text-gray-200">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <nav class="flex flex-col px-6 py-4 space-y-3 text-sm font-medium">
+            <a href="/" class="text-blue-600 font-semibold">Home</a>
+            <a href="/mydrives" class="hover:text-blue-600">My Drives</a>
+            <a href="/settings" class="hover:text-blue-600">Settings</a>
+            <a href="/logout" class="text-red-500 hover:text-red-600">Logout</a>
+        </nav>
+    </div>
+</header>
+
+<!-- 404 CONTENT -->
+<section class="min-h-screen flex items-center justify-center px-6 py-10">
+
+    <div class="w-full max-w-lg">
+
+        <!-- Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+
+            <div class="p-6 space-y-6 text-center">
+
+                <!-- Error code -->
+                <div class="text-6xl font-extrabold text-blue-600 dark:text-blue-400">
+                    404
                 </div>
+
+                <!-- Message -->
+                <div>
+                    <h1 class="text-2xl font-bold">
+                        Seite nicht gefunden
+                    </h1>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
+                        Die angeforderte Seite existiert leider nicht oder wurde verschoben.
+                    </p>
+                </div>
+
+                <!-- Action -->
+                <a href="/"
+                   class="inline-block bg-blue-600 hover:bg-blue-700
+                          text-white font-medium rounded-lg
+                          px-6 py-2.5 transition">
+                    Zur Startseite
+                </a>
+
             </div>
         </div>
-    </section>
+
+    </div>
+
+</section>
+
+<!-- Mobile Menu Script -->
+<script>
+    const btn = document.getElementById('menuBtn');
+    const menu = document.getElementById('mobileMenu');
+    btn.addEventListener('click', () => menu.classList.toggle('hidden'));
+</script>
+
 </body>
 </html>
