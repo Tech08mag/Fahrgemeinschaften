@@ -48,6 +48,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             if (res.ok) {
                 alert("Fahrt erfolgreich aktualisiert!");
+                window.location.href = "/home";
             } else {
                 throw new Error("Update fehlgeschlagen");
             }

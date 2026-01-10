@@ -163,9 +163,6 @@ def drive(num):
     else:
         return render_template('drive.html', drive_id=num)
 
-from flask import request, jsonify, session
-from sqlalchemy import select
-
 @app.route('/api/drive/<int:id>', methods=['GET', 'PUT'])
 def drive_api(id):
     # Auth check
