@@ -3,52 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>neue Fahrt</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    
     <script>
         const DRIVE_ID = {{ drive_id }};
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
 
-<!-- NAVBAR -->
-<header class="bg-white dark:bg-gray-800 shadow">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+{% extends 'base.html' %}
+{% block title %}neue Fahrt{% endblock %}
 
-        <!-- Brand -->
-        <a href="/home" class="flex items-center gap-2 text-lg sm:text-xl font-semibold text-blue-600 dark:text-blue-400">
-            <img src="/static/images/Fahrgemeinschaften.png" class="w-8 h-8" alt="logo">
-            Fahrgemeinschaften
-        </a>
-
-        <!-- Desktop Nav -->
-        <nav class="hidden md:flex gap-6 text-sm font-medium">
-            <a href="/home" class="text-blue-600 dark:text-blue-400 font-semibold">Home</a>
-            <a href="/mydrives" class="hover:text-blue-600 dark:hover:text-blue-400">My Drives</a>
-            <a href="/settings" class="hover:text-blue-600 dark:hover:text-blue-400">Settings</a>
-            <a href="/logout" class="text-red-500 hover:text-red-600">Logout</a>
-        </nav>
-
-        <!-- Mobile Menu Button -->
-        <button id="menuBtn" class="md:hidden text-gray-700 dark:text-gray-200">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="M4 6h16M4 12h16M4 18h16"/>
-            </svg>
-        </button>
-    </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-        <nav class="flex flex-col px-6 py-4 space-y-3 text-sm font-medium">
-            <a href="/home" class="text-blue-600 font-semibold">Home</a>
-            <a href="/mydrives" class="hover:text-blue-600">My Drives</a>
-            <a href="/settings" class="hover:text-blue-600">Settings</a>
-            <a href="/logout" class="text-red-500 hover:text-red-600">Logout</a>
-        </nav>
-    </div>
-</header>
-
+{% block content %}
 <!-- MAIN CONTENT -->
 <main class="max-w-md mx-auto px-6 py-10">
 
@@ -60,32 +27,32 @@
 
         <div>
             <label class="block text-sm font-medium mb-1">Datum</label>
-            <input type="date" id="date" name="date" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600">
+            <input type="date" id="date" name="date" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600" required>
         </div>
 
         <div>
             <label class="block text-sm font-medium mb-1">Uhrzeit</label>
-            <input type="time" id="time" name="time" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600">
+            <input type="time" id="time" name="time" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600" required>
         </div>
 
         <div>
             <label class="block text-sm font-medium mb-1">Startpunkt</label>
-            <input type="text" id="startpoint" name="startpoint" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600">
+            <input type="text" id="startpoint" name="startpoint" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600" required>
         </div>
 
         <div>
             <label class="block text-sm font-medium mb-1">Ziel</label>
-            <input type="text" id="destination" name="destination" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600">
+            <input type="text" id="destination" name="destination" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600" required>
         </div>
 
         <div>
             <label class="block text-sm font-medium mb-1">Freie Plätze</label>
-            <input type="number" id="seats" min="1" name="seats" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600">
+            <input type="number" id="seats" min="1" name="seats" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600" required>
         </div>
 
         <div>
             <label class="block text-sm font-medium mb-1">Preis (€)</label>
-            <input type="number" id="price" min="0" step="any" name="price" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600">
+            <input type="number" id="price" min="0" step="any" name="price" class="w-full rounded border px-3 py-2 focus:ring-2 focus:ring-blue-600" required>
         </div>
 
         <div class="flex gap-3 mt-4">
@@ -106,3 +73,4 @@
 
 </body>
 </html>
+{% endblock %}
