@@ -19,18 +19,32 @@ getmydrives()
     drives.forEach(drive => {
         const li = document.createElement('li');
         li.innerHTML = `
-            <h2>Fahrt nach ${drive.destination} am ${drive.date} um ${drive.time} Uhr von ${drive.startpoint}</h2>
-            <p>Veranstalter: ${drive.organizer}</p>
-            <p>Plätze: ${drive.seat_amount}</p>
-            <p>Preis: ${drive.price} Euro</p>
-            <a href="/edit_drive/${drive.id}">
-  <button class="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white
-         hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-         transition">
-         bearbeiten
-         </button></a>
-        <a href="/delete_drive/${drive.id}" class="inline-flex items-center gap-2 rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white
-         hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition"> löschen </button></a>
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+  <div class="p-6 space-y-2">
+    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+      Fahrt von <span class="font-medium text-gray-700 dark:text-gray-300">${drive.startpoint}</span>
+      nach <span class="font-medium text-gray-700 dark:text-gray-300">${drive.destination}</span>
+      am <span class="font-medium text-gray-700 dark:text-gray-300">${drive.date}</span> um
+      <span class="font-medium text-gray-700 dark:text-gray-300">${drive.time}</span> Uhr
+    </h2>
+
+    <p class="text-gray-600 dark:text-gray-400">Veranstalter: <span class="font-medium text-gray-800 dark:text-gray-200">${drive.organizer}</span></p>
+    <p class="text-gray-600 dark:text-gray-400">Plätze: <span class="font-medium text-gray-800 dark:text-gray-200">${drive.seat_amount}</span>
+    Preis: <span class="font-medium text-gray-800 dark:text-gray-200">${drive.price} €</span></p>
+
+    <div class="mt-4 flex gap-2">
+      <!-- Edit button -->
+      <a href="/drive/${drive.id_drive}" class="inline-block text-xs text-white bg-blue-600 rounded-md text-center px-3 py-1.5 border border-blue-600 hover:bg-blue-700 hover:border-blue-700 transition">
+        Bearbeiten
+      </a>
+
+      <!-- Delete button -->
+      <a href="/delete_drive/${drive.id}" class="inline-block text-xs text-white bg-red-600 rounded-md text-center px-3 py-1.5 border border-red-600 hover:bg-red-700 hover:border-red-700 transition">
+        Löschen
+      </a>
+    </div>
+  </div>
+</div>
         `;
         drivesList.appendChild(li);
     });

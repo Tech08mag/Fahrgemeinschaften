@@ -45,7 +45,7 @@ def create_route():
         session_db.add(drive)
         session_db.commit()
         flash("Die Fahrt wurde erfolgreich hinzugefügt")
-        return render_template('index.html')
+        return render_template('home.html')
     return render_template('create_route.html')
 
 @app.route('/mydrives', methods=['GET', 'POST'])
@@ -75,7 +75,7 @@ def register():
         email: str = request.form['email']
         password: str = request.form['password']
         password2: str = request.form['password2']
-        if password == password2:
+        if password == password2 and not session_db.execute(select(User).where(User.email.in_([email]))).scalar_one_or_none() and not session_db.execute(select(User).where(User.name.in_([username]))).scalar_one_or_none():
             p1 = PW_HANDLER(password)
             password_hash = p1.hashing()
             user = User(name=username, email=email, password_hash=password_hash)
@@ -116,17 +116,16 @@ def settings():
     if 'name' not in session:
         return redirect(url_for('login'))
     if request.method == 'POST':
-        new_username: str = request.form["user"]
         old_password:str = request.form["password-old"]
         new_password: str = request.form["password-new"]
-        stmt = select(User).where(User.email.in_([session['username']]))
+        stmt = select(User).where(User.email.in_([session['email']]))
         column_data = session_db.execute(stmt).scalar_one_or_none()
         password_hash = column_data.password_hash
         p1 = PW_HANDLER(old_password)
         if p1.verify(password_hash, old_password):
             p2 = PW_HANDLER(new_password)
             new_password_hash = p2.hashing()
-            upd = update(User).where(User.email.in_([session['username']])).values(name=new_username, password_hash=new_password_hash)
+            upd = update(User).where(User.email.in_([session['email']])).values(name=new_username, password_hash=new_password_hash)
             session_db.execute(upd)
             session_db.commit()
             return render_template('settings.html')
