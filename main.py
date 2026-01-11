@@ -143,20 +143,7 @@ def all_drives():
         return jsonify({"error": "Not logged in"}), 401
     stmt = select(Drive).where(Drive.organizer != session['name'])
     drives = session_db.execute(stmt).scalars().all()
-    drives_list = []
-    for drive in drives:
-        drives_list.append({
-            "id_drive": drive.id_drive,
-            "organizer": drive.organizer,
-            "date": drive.date,
-            "time": drive.time,
-            "price": float(drive.price) if drive.price else None,
-            "seat_amount": drive.seat_amount,
-            "startpoint": drive.startpoint,
-            "destination": drive.destination,
-            "osmlink": drive.osmlink
-        })
-    return jsonify(drives_list), 200
+    return jsonify([drive.__dict__ for drive in drives]), 200
 
 @app.route('/api/my_drives', methods=['GET'])
 def disp():
@@ -165,9 +152,7 @@ def disp():
     else:
         stmt = select(Drive).where(Drive.organizer == session['name'])
         my_drives = session_db.execute(stmt).scalars().all()
-        print(my_drives)
         my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
-        print(my_drives)
     return my_drives
 
 @app.route('/api/drive/passenger/<int:id>', methods=['POST'])
