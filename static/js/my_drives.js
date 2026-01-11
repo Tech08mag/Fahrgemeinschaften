@@ -37,9 +37,7 @@ getmydrives()
       <a href="/drive/${drive.id_drive}" class="inline-block text-xs text-white bg-blue-600 rounded-md text-center px-3 py-1.5 border border-blue-600 hover:bg-blue-700 hover:border-blue-700 transition">
         Bearbeiten
       </a>
-
-      <!-- Delete button -->
-      <a href="/delete_drive/${drive.id}" class="inline-block text-xs text-white bg-red-600 rounded-md text-center px-3 py-1.5 border border-red-600 hover:bg-red-700 hover:border-red-700 transition">
+      <a href="/api/drive/delete/${drive.id_drive}" class="inline-block text-xs text-white bg-red-600 rounded-md text-center px-3 py-1.5 border border-red-600 hover:bg-red-700 hover:border-red-700 transition">
         Löschen
       </a>
     </div>

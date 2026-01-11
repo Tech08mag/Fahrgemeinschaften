@@ -156,12 +156,27 @@ def disp():
         print(my_drives)
     return my_drives
 
-@app.route('/drive/<int:num>', methods=['GET'])
-def drive(num):
+@app.route('/drive/<int:id>', methods=['GET'])
+def drive(id):
     if 'name' not in session:
         return 'not logged in try loggin in'
     else:
-        return render_template('drive.html', drive_id=num)
+        return render_template('drive.html', drive_id=id)
+
+@app.route('/api/drive/delete/<int:id>', methods=['GET'])
+def delete_drive(id):
+    if 'name' not in session:
+        return 'not logged in try loggin in'
+    else:
+        organizer = session['name']
+        stmt = select(Drive).where(Drive.id_drive == id)
+        if session_db.execute(stmt).scalar_one_or_none().organizer == organizer:
+            stmt = delete(Drive).where(Drive.id_drive == id)
+            session_db.execute(stmt)
+            session_db.commit()
+            flash("Die Fahrt wurde erfolgreich gelöscht")
+            return redirect(url_for('home'))
+        return render_template('drive.html', drive_id=id)
 
 @app.route('/api/drive/<int:id>', methods=['GET', 'PUT'])
 def drive_api(id):
