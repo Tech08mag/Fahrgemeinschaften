@@ -1,17 +1,18 @@
 async function getmydrives() {
-    try {
-        const response = await fetch('/api/all_drives');
-        if (response.ok) {
-            const data = await response.json();
-            window.myDrivesData = data;
-            return data;
-        } else {
-            throw new Error('Failed to fetch data');
-        }
-    } catch (error) {
-        console.error('Error:', error); 
+  try {
+    const response = await fetch('/api/all_drives');
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch data');
     }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error:', error);
+    return [];
+  }
 }
+
 
 getmydrives()
 .then((drives) => {
@@ -46,14 +47,18 @@ getmydrives()
       Preis: 
       <span class="font-medium text-gray-800 dark:text-gray-200">${drive.price} €</span>
     </p>
-
     <div class="mt-4">
       <button
         onclick="addPassenger(${drive.id_drive})"
         class="inline-block text-xs text-white bg-green-600 rounded-md px-3 py-1.5 border border-green-600 hover:bg-green-700 hover:border-green-700 transition"
       >
-        Mitfahren
+        mitfahren
       </button>
+      <button
+  onclick="removePassenger(${drive.id_drive})"
+  class="inline-block text-xs text-white bg-red-600 rounded-md px-3 py-1.5 border border-red-600 hover:bg-red-700 hover:border-red-700 transition">
+        nicht mitfahren
+</button>
     </div>
   </div>
 </div>
@@ -64,19 +69,44 @@ getmydrives()
 })
 
 async function addPassenger(driveId) {
-    try {
-        const response = await fetch(`/api/drive/passenger/${driveId}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        if (response.ok) {
-            alert('Du wurdest als Passagier hinzugefügt!');
-        } else {
-            alert('Du bist bereits als Passagier eingetragen.');
-        }
-    } catch (error) {
-        console.error('Error:', error);
+  try {
+    const response = await fetch(`/api/passenger/${driveId}`, {
+      method: 'PUT'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || 'Fehler beim Hinzufügen');
+      return;
     }
+
+    alert('Du wurdest als Passagier hinzugefügt!');
+    location.reload();
+
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
+
+async function removePassenger(driveId) {
+  try {
+    const response = await fetch(`/api/passenger/${driveId}`, {
+      method: 'DELETE'
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.error || 'Du bist kein Passagier dieser Fahrt.');
+      return;
+    }
+
+    alert('Du wurdest als Passagier entfernt!');
+    location.reload();
+
+  } catch (error) {
+    console.error('Error:', error);
+  }
 }

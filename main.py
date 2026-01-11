@@ -282,14 +282,74 @@ def drive_api(id):
         "osmlink": drive.osmlink
     }), 200
 
-@app.route('/api/passenger/<int:id>', methods=['GET', 'PUT'])
+@app.route('/api/passenger/<int:id>', methods=['PUT', 'DELETE'])
 def passenger_api(id):
     # Auth check
     if 'name' not in session:
         return jsonify({"error": "Not logged in"}), 401
-    stmt = select(Passenger).where(Passenger.drive_id == id)
-    passengers = session_db.execute(stmt).scalars().all()
-    return jsonify([passenger.passenger_name for passenger in passengers]), 200
+
+    user_name = session['name']
+
+    drive = session_db.get(Drive, id)
+    if not drive:
+        return jsonify({"error": "Drive not found"}), 404
+
+    # ───────────────────────── REMOVE PASSENGER ─────────────────────────
+    if request.method == 'DELETE':
+        stmt = (
+            delete(Passenger)
+            .where(
+                Passenger.drive_id == id,
+                Passenger.passenger_name == user_name
+            )
+        )
+
+        result = session_db.execute(stmt)
+
+        if result.rowcount == 0:
+            return jsonify({"error": "Passenger not found"}), 404
+
+        drive.seat_amount += 1
+        session_db.commit()
+
+        return jsonify({
+            "status": "success",
+            "message": "Passenger removed"
+        }), 200
+
+    # ───────────────────────── ADD PASSENGER ─────────────────────────
+    if request.method == 'PUT':
+
+        if user_name == drive.organizer:
+            return jsonify({"error": "Organizer cannot be a passenger"}), 400
+
+        if drive.seat_amount <= 0:
+            return jsonify({"error": "No seats available"}), 400
+
+        existing_passenger = session_db.execute(
+            select(Passenger).where(
+                Passenger.drive_id == id,
+                Passenger.passenger_name == user_name
+            )
+        ).scalar_one_or_none()
+
+        if existing_passenger:
+            return jsonify({"error": "Already a passenger"}), 409
+
+        passenger = Passenger(
+            drive_id=id,
+            passenger_name=user_name
+        )
+
+        session_db.add(passenger)
+        drive.seat_amount -= 1
+        session_db.commit()
+
+        return jsonify({
+            "status": "success",
+            "message": "Passenger added"
+        }), 200
+
 
 
 @app.errorhandler(404)
