@@ -46,8 +46,8 @@ class Drive(Base):
 
 class Passenger(Base):
     __tablename__ = 'passenger'
-    drive_id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    passenger_name: Mapped[str] = mapped_column(String, primary_key=True)
+    drive_id: Column[int] = Column(Integer, primary_key=True)
+    passenger_name: Column[str] = Column(String, primary_key=True)
 
     def __repr__(self):
         return f"<User(drive_id='{self.drive_id}', passenger_name='{self.passenger_name}'>"

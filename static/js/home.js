@@ -44,7 +44,7 @@ async function addPassenger(driveId) {
         if (response.ok) {
             alert('Du wurdest als Passagier hinzugefügt!');
         } else {
-            alert('Fehler beim Hinzufügen als Passagier.');
+            alert('Du bist bereits als Passagier eingetragen.');
         }
     } catch (error) {
         console.error('Error:', error);

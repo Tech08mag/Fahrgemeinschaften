@@ -174,16 +174,24 @@ def disp():
 def add_passenger(id):
     if 'name' not in session:
         return jsonify({"error": "Not logged in"}), 401
-    if not drive:
-        return jsonify({"error": "Drive not found"}), 404
-    passenger = Passenger(drive_id=id, passenger_name=session['name'])
-    session_db.add(passenger)
-    session_db.commit()
-    return jsonify({"status": "success", "message": "Passenger added"}), 200
+    drive = session_db.get(Drive, id)
 
+    if session['name'] == drive.organizer:
+        return jsonify({"error": "Organizer cannot be a passenger"}), 400
+    if drive.seat_amount <= 0:
+        return jsonify({"error": "No seats available"}), 400
+    if session_db.execute(select(Passenger).where(Passenger.drive_id == id, Passenger.passenger_name == session['name'])).scalar_one_or_none():
+        return jsonify({"message": "You are already a passenger"}), 300
+    else:
+        passenger = Passenger(drive_id=id, passenger_name=session['name'])
+        session_db.add(passenger)
+        session_db.commit()
+        drive.seat_amount -= 1
+        session_db.commit()
+        return jsonify({"status": "success", "message": "Passenger added"}), 200
 
 @app.route('/drive/<int:id>', methods=['GET'])
-def drive(id):
+def get_drive_route(id):
     if 'name' not in session:
         return 'not logged in try loggin in'
     else:

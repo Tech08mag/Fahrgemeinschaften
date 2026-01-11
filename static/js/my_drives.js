@@ -29,8 +29,8 @@ getmydrives()
     </h2>
 
     <p class="text-gray-600 dark:text-gray-400">Veranstalter: <span class="font-medium text-gray-800 dark:text-gray-200">${drive.organizer}</span></p>
-    <p class="text-gray-600 dark:text-gray-400">Plätze: <span class="font-medium text-gray-800 dark:text-gray-200">${drive.seat_amount}</span>
-    Preis: <span class="font-medium text-gray-800 dark:text-gray-200">${drive.price} €</span></p>
+    <p class="text-gray-600 dark:text-gray-400">Plätze: <span class="font-medium text-gray-800 dark:text-gray-200">${drive.seat_amount}</span></p>
+    <p>Preis: <span class="font-medium text-gray-800 dark:text-gray-200">${drive.price} €</span></p>
 
     <div class="mt-4 flex gap-2">
       <!-- Edit button -->
