@@ -28,8 +28,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Handle form submission
     document.getElementById("drive-form").addEventListener("submit", async (e) => {
         e.preventDefault();
-        
-
         const updatedDrive = {
             date: document.getElementById("date").value,
             time: document.getElementById("time").value,
@@ -48,7 +46,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             if (res.ok) {
                 alert("Fahrt erfolgreich aktualisiert!");
-                window.location.href = "/home";
             } else {
                 throw new Error("Update fehlgeschlagen");
             }
