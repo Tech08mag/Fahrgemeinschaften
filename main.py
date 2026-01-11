@@ -139,21 +139,45 @@ def logout():
 
 @app.route('/api/all_drives', methods=['GET'])
 def all_drives():
-    if 'name' not in session:
-        return jsonify({"error": "Not logged in"}), 401
-    stmt = select(Drive).where(Drive.organizer != session['name'])
-    drives = session_db.execute(stmt).scalars().all()
-    return jsonify([drive.__dict__ for drive in drives]), 200
+        if 'name' not in session:
+            return jsonify({"error": "Not logged in"}), 401
+        stmt = select(Drive).where(Drive.organizer != session['name'])
+        drives = session_db.execute(stmt).scalars().all()
+        drives_list = []
+        for drive in drives:
+            drives_list.append({
+            "id_drive": drive.id_drive,
+            "organizer": drive.organizer,
+            "date": drive.date,
+            "time": drive.time,
+            "price": float(drive.price) if drive.price else None,
+            "seat_amount": drive.seat_amount,
+            "startpoint": drive.startpoint,
+            "destination": drive.destination,
+            "osmlink": drive.osmlink
+        })
+        return jsonify(drives_list), 200
 
 @app.route('/api/my_drives', methods=['GET'])
 def disp():
     if 'name' not in session:
-        return 'not logged in try loggin in'
-    else:
-        stmt = select(Drive).where(Drive.organizer == session['name'])
-        my_drives = session_db.execute(stmt).scalars().all()
-        my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
-    return my_drives
+            return jsonify({"error": "Not logged in"}), 401
+    stmt = select(Drive).where(Drive.organizer == session['name'])
+    drives = session_db.execute(stmt).scalars().all()
+    drives_list = []
+    for drive in drives:
+        drives_list.append({
+            "id_drive": drive.id_drive,
+            "organizer": drive.organizer,
+            "date": drive.date,
+            "time": drive.time,
+            "price": float(drive.price) if drive.price else None,
+            "seat_amount": drive.seat_amount,
+            "startpoint": drive.startpoint,
+            "destination": drive.destination,
+            "osmlink": drive.osmlink
+        })
+        return jsonify(drives_list), 200
 
 @app.route('/api/drive/passenger/<int:id>', methods=['POST'])
 def add_passenger(id):
