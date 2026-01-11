@@ -21,7 +21,7 @@ getmydrives()
         li.innerHTML = `
 <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
   <div class="p-6 space-y-2">
-    <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-100">
+    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
       Fahrt von <span class="font-medium text-gray-700 dark:text-gray-300">${drive.startpoint}</span>
       nach <span class="font-medium text-gray-700 dark:text-gray-300">${drive.destination}</span>
       am <span class="font-medium text-gray-700 dark:text-gray-300">${drive.date}</span> um
@@ -30,7 +30,7 @@ getmydrives()
 
     <p class="text-gray-600 dark:text-gray-400">Veranstalter: <span class="font-medium text-gray-800 dark:text-gray-200">${drive.organizer}</span></p>
     <p class="text-gray-600 dark:text-gray-400">Plätze: <span class="font-medium text-gray-800 dark:text-gray-200">${drive.seat_amount}</span></p>
-    <p>Preis: <span class="font-medium text-gray-800 dark:text-gray-200">${drive.price} €</span></p>
+    <p class="text-gray-600 dark:text-gray-400">Preis: <span class="font-medium text-gray-800 dark:text-gray-200">${drive.price} €</span></p>
 
     <div class="mt-4 flex gap-2">
       <!-- Edit button -->

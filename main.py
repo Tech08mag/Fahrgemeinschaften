@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
 from modules.db import User, Drive, Passenger
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import select, insert, update, delete, create_engine, URL
+from sqlalchemy import select, update, delete, create_engine, URL
 
 url_object = URL.create(
     "postgresql+psycopg2",
@@ -125,7 +125,7 @@ def settings():
         if p1.verify(password_hash, old_password):
             p2 = PW_HANDLER(new_password)
             new_password_hash = p2.hashing()
-            upd = update(User).where(User.email.in_([session['email']])).values(name=new_username, password_hash=new_password_hash)
+            upd = update(User).where(User.email.in_([session['email']])).values(password_hash=new_password_hash)
             session_db.execute(upd)
             session_db.commit()
             return render_template('settings.html')
@@ -272,6 +272,15 @@ def drive_api(id):
         "destination": drive.destination,
         "osmlink": drive.osmlink
     }), 200
+
+@app.route('/api/passenger/<int:id>', methods=['GET', 'PUT'])
+def passenger_api(id):
+    # Auth check
+    if 'name' not in session:
+        return jsonify({"error": "Not logged in"}), 401
+    stmt = select(Passenger).where(Passenger.drive_id == id)
+    passengers = session_db.execute(stmt).scalars().all()
+    return jsonify([passenger.passenger_name for passenger in passengers]), 200
 
 
 @app.errorhandler(404)

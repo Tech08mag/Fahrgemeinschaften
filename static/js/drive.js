@@ -28,8 +28,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Handle form submission
     document.getElementById("drive-form").addEventListener("submit", async (e) => {
         e.preventDefault();
-        
-
         const updatedDrive = {
             date: document.getElementById("date").value,
             time: document.getElementById("time").value,
