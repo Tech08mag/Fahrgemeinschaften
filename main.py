@@ -24,6 +24,11 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
+def login_required():
+    if 'name' and 'email' not in session:
+        return redirect(url_for('login'))
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -133,8 +138,7 @@ def settings():
 
 @app.route('/logout')
 def logout():
-    session.pop('name', None)
-    session.pop('email', None)
+    session.clear()
     return redirect(url_for('index'))
 
 @app.route('/api/all_drives', methods=['GET'])
@@ -223,11 +227,9 @@ def delete_drive(id):
 
 @app.route('/api/drive/<int:id>', methods=['GET', 'PUT'])
 def drive_api(id):
-    # Auth check
     if 'name' not in session:
         return jsonify({"error": "Not logged in"}), 401
 
-    # ---------- PUT ----------
     if request.method == 'PUT':
         data = request.get_json()
 
@@ -238,8 +240,6 @@ def drive_api(id):
 
         if not drive:
             return jsonify({"error": "Drive not found"}), 404
-
-        # Optional: block updating primary key
         data.pop("id_drive", None)
 
         for field, value in data.items():
@@ -262,15 +262,14 @@ def drive_api(id):
                 "osmlink": drive.osmlink
             }
         }), 200
+    if request.method == 'GET':
+        stmt = select(Drive).where(Drive.id_drive == id)
+        drive = session_db.execute(stmt).scalar_one_or_none()
 
-    # ---------- GET ----------
-    stmt = select(Drive).where(Drive.id_drive == id)
-    drive = session_db.execute(stmt).scalar_one_or_none()
+        if not drive:
+            return jsonify({"error": "Drive not found"}), 404
 
-    if not drive:
-        return jsonify({"error": "Drive not found"}), 404
-
-    return jsonify({
+        return jsonify({
         "id_drive": drive.id_drive,
         "organizer": drive.organizer,
         "date": drive.date,
@@ -294,7 +293,6 @@ def passenger_api(id):
     if not drive:
         return jsonify({"error": "Drive not found"}), 404
 
-    # ───────────────────────── REMOVE PASSENGER ─────────────────────────
     if request.method == 'DELETE':
         stmt = (
             delete(Passenger)
@@ -316,16 +314,12 @@ def passenger_api(id):
             "status": "success",
             "message": "Passenger removed"
         }), 200
-
-    # ───────────────────────── ADD PASSENGER ─────────────────────────
     if request.method == 'PUT':
-
         if user_name == drive.organizer:
-            return jsonify({"error": "Organizer cannot be a passenger"}), 400
+            return jsonify({"error": "Organizer cannot be a passenger"}), 404
 
         if drive.seat_amount <= 0:
             return jsonify({"error": "No seats available"}), 400
-
         existing_passenger = session_db.execute(
             select(Passenger).where(
                 Passenger.drive_id == id,
@@ -336,10 +330,7 @@ def passenger_api(id):
         if existing_passenger:
             return jsonify({"error": "Already a passenger"}), 409
 
-        passenger = Passenger(
-            drive_id=id,
-            passenger_name=user_name
-        )
+        passenger = Passenger(drive_id=id, passenger_name=user_name)
 
         session_db.add(passenger)
         drive.seat_amount -= 1
