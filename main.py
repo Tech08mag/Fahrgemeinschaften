@@ -159,7 +159,7 @@ def all_drives():
         return jsonify(drives_list), 200
 
 @app.route('/api/my_drives', methods=['GET'])
-def disp():
+def api_my_drives():
     if 'name' not in session:
             return jsonify({"error": "Not logged in"}), 401
     stmt = select(Drive).where(Drive.organizer == session['name'])
@@ -177,7 +177,7 @@ def disp():
             "destination": drive.destination,
             "osmlink": drive.osmlink
         })
-        return jsonify(drives_list), 200
+    return jsonify(drives_list), 200
 
 @app.route('/api/drive/passenger/<int:id>', methods=['POST'])
 def add_passenger(id):

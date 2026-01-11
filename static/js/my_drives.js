@@ -71,6 +71,7 @@ getmydrives().then(async (drives) => {
             <span class="font-medium text-gray-800 dark:text-gray-200">${drive.organizer}</span>
           </p>
 
+
           <p class="text-gray-600 dark:text-gray-400">
             Plätze: 
             <span class="font-medium text-gray-800 dark:text-gray-200">${drive.seat_amount}</span>
