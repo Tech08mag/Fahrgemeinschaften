@@ -35,9 +35,19 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+#----- Routes -----
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/home', methods=['GET', 'POST'])
+@login_required
+def home():
+        stmt = select(Drive).where(Drive.organizer != session['name'])
+        my_drives = session_db.execute(stmt).scalars().all()
+        my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
+        return render_template('home.html', my_drives=my_drives)
+
 
 @app.route('/create_route', methods=['GET', 'POST'])
 @login_required
@@ -58,42 +68,6 @@ def create_route():
         return render_template('home.html')
     return render_template('create_route.html')
 
-@app.route('/mydrives', methods=['GET', 'POST'])
-@login_required
-def my_drives():
-        stmt = select(Drive).where(Drive.organizer == session['name'])
-        my_drives = session_db.execute(stmt).scalars().all()
-        my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
-        return render_template('my_drives.html', my_drives=my_drives)
-
-@app.route('/home', methods=['GET', 'POST'])
-@login_required
-def home():
-        stmt = select(Drive).where(Drive.organizer != session['name'])
-        my_drives = session_db.execute(stmt).scalars().all()
-        my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
-        return render_template('home.html', my_drives=my_drives)
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username: str = request.form['username']
-        email: str = request.form['email']
-        password: str = request.form['password']
-        password2: str = request.form['password2']
-        if password == password2 and not session_db.execute(select(User).where(User.email.in_([email]))).scalar_one_or_none() and not session_db.execute(select(User).where(User.name.in_([username]))).scalar_one_or_none():
-            p1 = PW_HANDLER(password)
-            password_hash = p1.hashing()
-            user = User(name=username, email=email, password_hash=password_hash)
-            session_db.add(user)
-            session_db.commit()
-            flash("registration successful, please log in")
-            return redirect(url_for('login'))
-        else:
-            flash("passwords do not match or your email is already in use")
-            return render_template('register.html')
-    return render_template('register.html')
-    
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -117,6 +91,50 @@ def login():
                 return render_template('login.html')
     return render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username: str = request.form['username']
+        email: str = request.form['email']
+        password: str = request.form['password']
+        password2: str = request.form['password2']
+        if password == password2 and not session_db.execute(select(User).where(User.email.in_([email]))).scalar_one_or_none() and not session_db.execute(select(User).where(User.name.in_([username]))).scalar_one_or_none():
+            p1 = PW_HANDLER(password)
+            password_hash = p1.hashing()
+            user = User(name=username, email=email, password_hash=password_hash)
+            session_db.add(user)
+            session_db.commit()
+            flash("registration successful, please log in")
+            return redirect(url_for('login'))
+        else:
+            flash("passwords do not match or your email is already in use")
+            return render_template('register.html')
+    return render_template('register.html')
+
+
+@app.route('/mydrives', methods=['GET', 'POST'])
+@login_required
+def my_drives():
+        stmt = select(Drive).where(Drive.organizer == session['name'])
+        my_drives = session_db.execute(stmt).scalars().all()
+        my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
+        return render_template('my_drives.html', my_drives=my_drives)
+
+@app.route('/drive/<int:id>', methods=['GET'])
+@login_required
+def get_drive_route(id):
+        return render_template('drive.html', drive_id=id)
+
+
+    
+
+
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
@@ -136,10 +154,12 @@ def settings():
             return render_template('settings.html')
     return render_template('settings.html')
 
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('index'))
+@app.errorhandler(404)
+def not_found(e):
+  return render_template("404.html")
+
+
+#----- API Routes -----
 
 @app.route('/api/all_drives', methods=['GET'])
 @login_required
@@ -203,10 +223,7 @@ def add_passenger(id):
         session_db.commit()
         return jsonify({"status": "success", "message": "Passenger added"}), 200
 
-@app.route('/drive/<int:id>', methods=['GET'])
-@login_required
-def get_drive_route(id):
-        return render_template('drive.html', drive_id=id)
+
 
 @app.route('/api/drive/delete/<int:id>', methods=['GET'])
 @login_required
@@ -342,12 +359,6 @@ def passenger_api(id):
             "status": "success",
             "message": "Passenger added"
         }), 200
-
-
-
-@app.errorhandler(404)
-def not_found(e):
-  return render_template("404.html")
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
