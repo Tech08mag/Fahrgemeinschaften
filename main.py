@@ -7,6 +7,8 @@ from modules.db import User, Drive, Passenger
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import select, update, delete, create_engine, URL
 
+from functools import wraps
+
 url_object = URL.create(
     "postgresql+psycopg2",
     username=os.getenv("PG_USERNAME"),
@@ -24,19 +26,22 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
-def login_required():
-    if 'name' and 'email' not in session:
-        return redirect(url_for('login'))
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'name' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
 @app.route('/create_route', methods=['GET', 'POST'])
+@login_required
 def create_route():
-    if 'name' not in session:
-        return redirect(url_for('login'))
     if request.method == 'POST':
         stmt = select(User).where(User.email.in_([session['email']]))
         column_data = session_db.execute(stmt).scalar_one_or_none()
@@ -54,20 +59,16 @@ def create_route():
     return render_template('create_route.html')
 
 @app.route('/mydrives', methods=['GET', 'POST'])
+@login_required
 def my_drives():
-    if 'name' not in session:
-        return redirect(url_for('login'))
-    else:
         stmt = select(Drive).where(Drive.organizer == session['name'])
         my_drives = session_db.execute(stmt).scalars().all()
         my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
         return render_template('my_drives.html', my_drives=my_drives)
 
 @app.route('/home', methods=['GET', 'POST'])
+@login_required
 def home():
-    if 'name' not in session:
-        return redirect(url_for('login'))
-    else:
         stmt = select(Drive).where(Drive.organizer != session['name'])
         my_drives = session_db.execute(stmt).scalars().all()
         my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
@@ -117,9 +118,8 @@ def login():
     return render_template('login.html')
 
 @app.route('/settings', methods=['GET', 'POST'])
+@login_required
 def settings():
-    if 'name' not in session:
-        return redirect(url_for('login'))
     if request.method == 'POST':
         old_password:str = request.form["password-old"]
         new_password: str = request.form["password-new"]
@@ -142,9 +142,8 @@ def logout():
     return redirect(url_for('index'))
 
 @app.route('/api/all_drives', methods=['GET'])
+@login_required
 def all_drives():
-        if 'name' not in session:
-            return jsonify({"error": "Not logged in"}), 401
         stmt = select(Drive).where(Drive.organizer != session['name'])
         drives = session_db.execute(stmt).scalars().all()
         drives_list = []
@@ -163,9 +162,8 @@ def all_drives():
         return jsonify(drives_list), 200
 
 @app.route('/api/my_drives', methods=['GET'])
+@login_required
 def api_my_drives():
-    if 'name' not in session:
-            return jsonify({"error": "Not logged in"}), 401
     if request.method != 'GET':
         return jsonify({"error": "Invalid request method"}), 405
     if request.method == 'GET':
@@ -187,9 +185,8 @@ def api_my_drives():
         return jsonify(drives_list), 200
 
 @app.route('/api/drive/passenger/<int:id>', methods=['POST'])
+@login_required
 def add_passenger(id):
-    if 'name' not in session:
-        return jsonify({"error": "Not logged in"}), 401
     drive = session_db.get(Drive, id)
 
     if session['name'] == drive.organizer:
@@ -207,17 +204,13 @@ def add_passenger(id):
         return jsonify({"status": "success", "message": "Passenger added"}), 200
 
 @app.route('/drive/<int:id>', methods=['GET'])
+@login_required
 def get_drive_route(id):
-    if 'name' not in session:
-        return 'not logged in try loggin in'
-    else:
         return render_template('drive.html', drive_id=id)
 
 @app.route('/api/drive/delete/<int:id>', methods=['GET'])
+@login_required
 def delete_drive(id):
-    if 'name' not in session:
-        return 'not logged in try loggin in'
-    else:
         organizer = session['name']
         stmt = select(Drive).where(Drive.id_drive == id)
         if session_db.execute(stmt).scalar_one_or_none().organizer == organizer:
@@ -229,10 +222,8 @@ def delete_drive(id):
         return render_template('drive.html', drive_id=id)
 
 @app.route('/api/drive/<int:id>', methods=['GET', 'PUT'])
+@login_required
 def drive_api(id):
-    if 'name' not in session:
-        return jsonify({"error": "Not logged in"}), 401
-
     if request.method == 'PUT':
         data = request.get_json()
 
@@ -285,10 +276,8 @@ def drive_api(id):
     }), 200
 
 @app.route('/api/passenger/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+@login_required
 def passenger_api(id):
-    # Auth check
-    if 'name' not in session:
-        return jsonify({"error": "Not logged in"}), 401
 
     user_name = session['name']
 
