@@ -166,11 +166,14 @@ def all_drives():
 def api_my_drives():
     if 'name' not in session:
             return jsonify({"error": "Not logged in"}), 401
-    stmt = select(Drive).where(Drive.organizer == session['name'])
-    drives = session_db.execute(stmt).scalars().all()
-    drives_list = []
-    for drive in drives:
-        drives_list.append({
+    if request.method != 'GET':
+        return jsonify({"error": "Invalid request method"}), 405
+    if request.method == 'GET':
+        stmt = select(Drive).where(Drive.organizer == session['name'])
+        drives = session_db.execute(stmt).scalars().all()
+        drives_list = []
+        for drive in drives:
+            drives_list.append({
             "id_drive": drive.id_drive,
             "organizer": drive.organizer,
             "date": drive.date,
@@ -181,7 +184,7 @@ def api_my_drives():
             "destination": drive.destination,
             "osmlink": drive.osmlink
         })
-    return jsonify(drives_list), 200
+        return jsonify(drives_list), 200
 
 @app.route('/api/drive/passenger/<int:id>', methods=['POST'])
 def add_passenger(id):
@@ -281,7 +284,7 @@ def drive_api(id):
         "osmlink": drive.osmlink
     }), 200
 
-@app.route('/api/passenger/<int:id>', methods=['PUT', 'DELETE'])
+@app.route('/api/passenger/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 def passenger_api(id):
     # Auth check
     if 'name' not in session:
@@ -292,6 +295,16 @@ def passenger_api(id):
     drive = session_db.get(Drive, id)
     if not drive:
         return jsonify({"error": "Drive not found"}), 404
+    
+    if request.method == 'GET':
+        stmt = select(Passenger).where(Passenger.drive_id == id)
+        passengers = session_db.execute(stmt).scalars().all()
+        passenger_list = [passenger.passenger_name for passenger in passengers]
+
+        return jsonify({
+            "drive_id": id,
+            "passengers": passenger_list
+        }), 200
 
     if request.method == 'DELETE':
         stmt = (
