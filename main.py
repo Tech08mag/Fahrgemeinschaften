@@ -131,10 +131,13 @@ def my_drives():
 def get_drive_route(id):
         return render_template('drive.html', drive_id=id)
 
-
+@app.route("/passenger", methods=['GET'])
+@login_required
+def passenger():
+    if request.method == 'GET':
+        return render_template('passenger.html')
+        
     
-
-
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
@@ -241,38 +244,6 @@ def delete_drive(id):
 @app.route('/api/drive/<int:id>', methods=['GET', 'PUT'])
 @login_required
 def drive_api(id):
-    if request.method == 'PUT':
-        data = request.get_json()
-
-        if not data:
-            return jsonify({"error": "No data provided"}), 400
-
-        drive = session_db.get(Drive, id)
-
-        if not drive:
-            return jsonify({"error": "Drive not found"}), 404
-        data.pop("id_drive", None)
-
-        for field, value in data.items():
-            if hasattr(drive, field):
-                setattr(drive, field, value)
-
-        session_db.commit()
-
-        return jsonify({
-            "status": "success",
-            "drive": {
-                "id_drive": drive.id_drive,
-                "organizer": drive.organizer,
-                "date": drive.date,
-                "time": drive.time,
-                "price": float(drive.price) if drive.price else None,
-                "seat_amount": drive.seat_amount,
-                "startpoint": drive.startpoint,
-                "destination": drive.destination,
-                "osmlink": drive.osmlink
-            }
-        }), 200
     if request.method == 'GET':
         stmt = select(Drive).where(Drive.id_drive == id)
         drive = session_db.execute(stmt).scalar_one_or_none()
@@ -360,5 +331,29 @@ def passenger_api(id):
             "message": "Passenger added"
         }), 200
 
+@app.route("/api/user/passenger/")
+@login_required
+def get_passenger_drives():
+    drive_list = []
+    stmt2 = select(Passenger.drive_id).where(Passenger.passenger_name == session["name"])
+    drive_ids = session_db.execute(stmt2).scalars().all()
+
+    for drive_id in drive_ids:
+        stmt = select(Drive).where(Drive.id_drive == drive_id)
+        drive = session_db.execute(stmt).scalar_one_or_none()
+
+        drive_list.append({
+            "id_drive": drive.id_drive,
+            "organizer": drive.organizer,
+            "date": drive.date,
+            "time": drive.time,
+            "price": float(drive.price) if drive.price else None,
+            "seat_amount": drive.seat_amount,
+            "startpoint": drive.startpoint,
+            "destination": drive.destination,
+            "osmlink": drive.osmlink
+        })
+    return drive_list
+
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
