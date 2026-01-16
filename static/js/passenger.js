@@ -13,11 +13,40 @@ async function getmydrives() {
   }
 }
 
+async function get_passengers(drive_id) {
+    try {
+        const response = await fetch(`/api/passenger/${drive_id}`);
+        if (response.ok) {
+            const data = await response.json();
+            console.log(data.passengers)
+            return data.passengers;
+        } else {
+            throw new Error('Failed to fetch passengers');
+        }
+    } catch (error) {
+        console.error('Error:', error); 
+    }
+}
 
-getmydrives()
-.then((drives) => {
+getmydrives().then(async(drives) => {
     const drivesList = document.getElementById('drives-list');
-    drives.forEach(drive => {
+    for (const drive of drives) {
+      const passengers = await get_passengers(drive.id_drive);
+  
+      const passengersHtml = passengers.length > 0
+      ? passengers.map(passenger => `
+          <p class="text-gray-600 dark:text-gray-400">
+            Mitfahrer: 
+            <span class="font-medium text-gray-800 dark:text-gray-200">
+              ${passenger}
+            </span>
+          </p>
+        `).join('')
+      : `
+        <p class="text-gray-500 dark:text-gray-500 italic">
+          Keine Mitfahrer
+        </p>
+      `;
 
         const paragraph = document.createElement('p');
         paragraph.innerHTML = `
@@ -48,6 +77,7 @@ getmydrives()
       Preis: 
       <span class="font-medium text-gray-800 dark:text-gray-200">${drive.price} €</span>
     </p>
+    ${passengersHtml}
     <div class="mt-4">
       <button
         onclick="addPassenger(${drive.id_drive})"
@@ -66,7 +96,7 @@ getmydrives()
 
         `;
         drivesList.appendChild(paragraph);
-    });
+    };
 })
 
 async function addPassenger(driveId) {
