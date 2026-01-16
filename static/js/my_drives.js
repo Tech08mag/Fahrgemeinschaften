@@ -18,7 +18,7 @@ async function get_passengers(drive_id) {
         const response = await fetch(`/api/passenger/${drive_id}`);
         if (response.ok) {
             const data = await response.json();
-            return data;
+            return data.passengers;
         } else {
             throw new Error('Failed to fetch passengers');
         }

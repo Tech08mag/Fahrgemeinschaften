@@ -7,6 +7,8 @@ from modules.db import User, Drive, Passenger
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import select, update, delete, create_engine, URL
 
+from functools import wraps
+
 url_object = URL.create(
     "postgresql+psycopg2",
     username=os.getenv("PG_USERNAME"),
@@ -24,14 +26,32 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'name' not in session:
+            return redirect(url_for('login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+#----- Routes -----
 @app.route('/')
 def index():
     return render_template('index.html')
 
+@app.route('/home', methods=['GET', 'POST'])
+@login_required
+def home():
+        stmt = select(Drive).where(Drive.organizer != session['name'])
+        my_drives = session_db.execute(stmt).scalars().all()
+        my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
+        return render_template('home.html', my_drives=my_drives)
+
+
 @app.route('/create_route', methods=['GET', 'POST'])
+@login_required
 def create_route():
-    if 'name' not in session:
-        return redirect(url_for('login'))
     if request.method == 'POST':
         stmt = select(User).where(User.email.in_([session['email']]))
         column_data = session_db.execute(stmt).scalar_one_or_none()
@@ -48,46 +68,6 @@ def create_route():
         return render_template('home.html')
     return render_template('create_route.html')
 
-@app.route('/mydrives', methods=['GET', 'POST'])
-def my_drives():
-    if 'name' not in session:
-        return redirect(url_for('login'))
-    else:
-        stmt = select(Drive).where(Drive.organizer == session['name'])
-        my_drives = session_db.execute(stmt).scalars().all()
-        my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
-        return render_template('my_drives.html', my_drives=my_drives)
-
-@app.route('/home', methods=['GET', 'POST'])
-def home():
-    if 'name' not in session:
-        return redirect(url_for('login'))
-    else:
-        stmt = select(Drive).where(Drive.organizer != session['name'])
-        my_drives = session_db.execute(stmt).scalars().all()
-        my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
-        return render_template('home.html', my_drives=my_drives)
-
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    if request.method == 'POST':
-        username: str = request.form['username']
-        email: str = request.form['email']
-        password: str = request.form['password']
-        password2: str = request.form['password2']
-        if password == password2 and not session_db.execute(select(User).where(User.email.in_([email]))).scalar_one_or_none() and not session_db.execute(select(User).where(User.name.in_([username]))).scalar_one_or_none():
-            p1 = PW_HANDLER(password)
-            password_hash = p1.hashing()
-            user = User(name=username, email=email, password_hash=password_hash)
-            session_db.add(user)
-            session_db.commit()
-            flash("registration successful, please log in")
-            return redirect(url_for('login'))
-        else:
-            flash("passwords do not match or your email is already in use")
-            return render_template('register.html')
-    return render_template('register.html')
-    
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -111,10 +91,56 @@ def login():
                 return render_template('login.html')
     return render_template('login.html')
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('index'))
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username: str = request.form['username']
+        email: str = request.form['email']
+        password: str = request.form['password']
+        password2: str = request.form['password2']
+        if password == password2 and not session_db.execute(select(User).where(User.email.in_([email]))).scalar_one_or_none() and not session_db.execute(select(User).where(User.name.in_([username]))).scalar_one_or_none():
+            p1 = PW_HANDLER(password)
+            password_hash = p1.hashing()
+            user = User(name=username, email=email, password_hash=password_hash)
+            session_db.add(user)
+            session_db.commit()
+            flash("registration successful, please log in")
+            return redirect(url_for('login'))
+        else:
+            flash("passwords do not match or your email is already in use")
+            return render_template('register.html')
+    return render_template('register.html')
+
+
+@app.route('/mydrives', methods=['GET', 'POST'])
+@login_required
+def my_drives():
+        stmt = select(Drive).where(Drive.organizer == session['name'])
+        my_drives = session_db.execute(stmt).scalars().all()
+        my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
+        return render_template('my_drives.html', my_drives=my_drives)
+
+@app.route('/drive/<int:id>', methods=['GET'])
+@login_required
+def get_drive_route(id):
+        return render_template('drive.html', drive_id=id)
+
+@app.route("/passenger", methods=['GET'])
+@login_required
+def passenger():
+    if request.method == 'GET':
+        return render_template('passenger.html')
+        
+    
 @app.route('/settings', methods=['GET', 'POST'])
+@login_required
 def settings():
-    if 'name' not in session:
-        return redirect(url_for('login'))
     if request.method == 'POST':
         old_password:str = request.form["password-old"]
         new_password: str = request.form["password-new"]
@@ -131,16 +157,16 @@ def settings():
             return render_template('settings.html')
     return render_template('settings.html')
 
-@app.route('/logout')
-def logout():
-    session.pop('name', None)
-    session.pop('email', None)
-    return redirect(url_for('index'))
+@app.errorhandler(404)
+def not_found(e):
+  return render_template("404.html")
+
+
+#----- API Routes -----
 
 @app.route('/api/all_drives', methods=['GET'])
+@login_required
 def all_drives():
-        if 'name' not in session:
-            return jsonify({"error": "Not logged in"}), 401
         stmt = select(Drive).where(Drive.organizer != session['name'])
         drives = session_db.execute(stmt).scalars().all()
         drives_list = []
@@ -159,14 +185,16 @@ def all_drives():
         return jsonify(drives_list), 200
 
 @app.route('/api/my_drives', methods=['GET'])
+@login_required
 def api_my_drives():
-    if 'name' not in session:
-            return jsonify({"error": "Not logged in"}), 401
-    stmt = select(Drive).where(Drive.organizer == session['name'])
-    drives = session_db.execute(stmt).scalars().all()
-    drives_list = []
-    for drive in drives:
-        drives_list.append({
+    if request.method != 'GET':
+        return jsonify({"error": "Invalid request method"}), 405
+    if request.method == 'GET':
+        stmt = select(Drive).where(Drive.organizer == session['name'])
+        drives = session_db.execute(stmt).scalars().all()
+        drives_list = []
+        for drive in drives:
+            drives_list.append({
             "id_drive": drive.id_drive,
             "organizer": drive.organizer,
             "date": drive.date,
@@ -177,12 +205,11 @@ def api_my_drives():
             "destination": drive.destination,
             "osmlink": drive.osmlink
         })
-    return jsonify(drives_list), 200
+        return jsonify(drives_list), 200
 
 @app.route('/api/drive/passenger/<int:id>', methods=['POST'])
+@login_required
 def add_passenger(id):
-    if 'name' not in session:
-        return jsonify({"error": "Not logged in"}), 401
     drive = session_db.get(Drive, id)
 
     if session['name'] == drive.organizer:
@@ -199,18 +226,11 @@ def add_passenger(id):
         session_db.commit()
         return jsonify({"status": "success", "message": "Passenger added"}), 200
 
-@app.route('/drive/<int:id>', methods=['GET'])
-def get_drive_route(id):
-    if 'name' not in session:
-        return 'not logged in try loggin in'
-    else:
-        return render_template('drive.html', drive_id=id)
+
 
 @app.route('/api/drive/delete/<int:id>', methods=['GET'])
+@login_required
 def delete_drive(id):
-    if 'name' not in session:
-        return 'not logged in try loggin in'
-    else:
         organizer = session['name']
         stmt = select(Drive).where(Drive.id_drive == id)
         if session_db.execute(stmt).scalar_one_or_none().organizer == organizer:
@@ -222,55 +242,16 @@ def delete_drive(id):
         return render_template('drive.html', drive_id=id)
 
 @app.route('/api/drive/<int:id>', methods=['GET', 'PUT'])
+@login_required
 def drive_api(id):
-    # Auth check
-    if 'name' not in session:
-        return jsonify({"error": "Not logged in"}), 401
-
-    # ---------- PUT ----------
-    if request.method == 'PUT':
-        data = request.get_json()
-
-        if not data:
-            return jsonify({"error": "No data provided"}), 400
-
-        drive = session_db.get(Drive, id)
+    if request.method == 'GET':
+        stmt = select(Drive).where(Drive.id_drive == id)
+        drive = session_db.execute(stmt).scalar_one_or_none()
 
         if not drive:
             return jsonify({"error": "Drive not found"}), 404
 
-        # Optional: block updating primary key
-        data.pop("id_drive", None)
-
-        for field, value in data.items():
-            if hasattr(drive, field):
-                setattr(drive, field, value)
-
-        session_db.commit()
-
         return jsonify({
-            "status": "success",
-            "drive": {
-                "id_drive": drive.id_drive,
-                "organizer": drive.organizer,
-                "date": drive.date,
-                "time": drive.time,
-                "price": float(drive.price) if drive.price else None,
-                "seat_amount": drive.seat_amount,
-                "startpoint": drive.startpoint,
-                "destination": drive.destination,
-                "osmlink": drive.osmlink
-            }
-        }), 200
-
-    # ---------- GET ----------
-    stmt = select(Drive).where(Drive.id_drive == id)
-    drive = session_db.execute(stmt).scalar_one_or_none()
-
-    if not drive:
-        return jsonify({"error": "Drive not found"}), 404
-
-    return jsonify({
         "id_drive": drive.id_drive,
         "organizer": drive.organizer,
         "date": drive.date,
@@ -282,19 +263,26 @@ def drive_api(id):
         "osmlink": drive.osmlink
     }), 200
 
-@app.route('/api/passenger/<int:id>', methods=['PUT', 'DELETE'])
+@app.route('/api/passenger/<int:id>', methods=['GET', 'PUT', 'DELETE'])
+@login_required
 def passenger_api(id):
-    # Auth check
-    if 'name' not in session:
-        return jsonify({"error": "Not logged in"}), 401
 
     user_name = session['name']
 
     drive = session_db.get(Drive, id)
     if not drive:
         return jsonify({"error": "Drive not found"}), 404
+    
+    if request.method == 'GET':
+        stmt = select(Passenger).where(Passenger.drive_id == id)
+        passengers = session_db.execute(stmt).scalars().all()
+        passenger_list = [passenger.passenger_name for passenger in passengers]
 
-    # ───────────────────────── REMOVE PASSENGER ─────────────────────────
+        return jsonify({
+            "drive_id": id,
+            "passengers": passenger_list
+        }), 200
+
     if request.method == 'DELETE':
         stmt = (
             delete(Passenger)
@@ -316,16 +304,12 @@ def passenger_api(id):
             "status": "success",
             "message": "Passenger removed"
         }), 200
-
-    # ───────────────────────── ADD PASSENGER ─────────────────────────
     if request.method == 'PUT':
-
         if user_name == drive.organizer:
-            return jsonify({"error": "Organizer cannot be a passenger"}), 400
+            return jsonify({"error": "Organizer cannot be a passenger"}), 404
 
         if drive.seat_amount <= 0:
             return jsonify({"error": "No seats available"}), 400
-
         existing_passenger = session_db.execute(
             select(Passenger).where(
                 Passenger.drive_id == id,
@@ -336,10 +320,7 @@ def passenger_api(id):
         if existing_passenger:
             return jsonify({"error": "Already a passenger"}), 409
 
-        passenger = Passenger(
-            drive_id=id,
-            passenger_name=user_name
-        )
+        passenger = Passenger(drive_id=id, passenger_name=user_name)
 
         session_db.add(passenger)
         drive.seat_amount -= 1
@@ -350,11 +331,29 @@ def passenger_api(id):
             "message": "Passenger added"
         }), 200
 
+@app.route("/api/user/passenger/")
+@login_required
+def get_passenger_drives():
+    drive_list = []
+    stmt2 = select(Passenger.drive_id).where(Passenger.passenger_name == session["name"])
+    drive_ids = session_db.execute(stmt2).scalars().all()
 
+    for drive_id in drive_ids:
+        stmt = select(Drive).where(Drive.id_drive == drive_id)
+        drive = session_db.execute(stmt).scalar_one_or_none()
 
-@app.errorhandler(404)
-def not_found(e):
-  return render_template("404.html")
+        drive_list.append({
+            "id_drive": drive.id_drive,
+            "organizer": drive.organizer,
+            "date": drive.date,
+            "time": drive.time,
+            "price": float(drive.price) if drive.price else None,
+            "seat_amount": drive.seat_amount,
+            "startpoint": drive.startpoint,
+            "destination": drive.destination,
+            "osmlink": drive.osmlink
+        })
+    return drive_list
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
