@@ -1,5 +1,5 @@
 .next
-.node_modules
+/node_modules
 data
 db_test
 .env
