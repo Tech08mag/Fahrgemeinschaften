@@ -43,10 +43,10 @@ def index():
 @app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
-        stmt = select(Drive).where(Drive.organizer != session['name'])
+        stmt = select(Drive).where(Drive.organizer != session['name'] and Drive.seat_amount > 0)
         my_drives = session_db.execute(stmt).scalars().all()
         my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
-        return render_template('home.html', my_drives=my_drives)
+        return render_template('home.html')
 
 
 @app.route('/create_route', methods=['GET', 'POST'])
@@ -153,14 +153,15 @@ def settings():
         stmt = select(User).where(User.email.in_([session['email']]))
         column_data = session_db.execute(stmt).scalar_one_or_none()
         password_hash = column_data.password_hash
-        p1 = PW_HANDLER(old_password)
-        if p1.verify(password_hash, old_password):
-            p2 = PW_HANDLER(new_password)
-            new_password_hash = p2.hashing()
+        if verify(password_hash, old_password):
+            p2 = hashing(new_password)
+            new_password_hash = p2
             upd = update(User).where(User.email.in_([session['email']])).values(password_hash=new_password_hash)
             session_db.execute(upd)
             session_db.commit()
             return render_template('settings.html')
+        else:
+            flash("Altes Passwort ist falsch")
     return render_template('settings.html')
 
 @app.errorhandler(404)
@@ -173,7 +174,7 @@ def not_found(e):
 @app.route('/api/all_drives', methods=['GET'])
 @login_required
 def all_drives():
-        stmt = select(Drive).where(Drive.organizer != session['name'])
+        stmt = select(Drive).where(Drive.organizer != session['name'] and Drive.seat_amount > 0)
         drives = session_db.execute(stmt).scalars().all()
         drives_list = []
         for drive in drives:
