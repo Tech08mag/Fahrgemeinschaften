@@ -43,11 +43,14 @@ def index():
 @app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():
-        stmt = select(Drive).where(Drive.organizer != session['name'] and Drive.seat_amount > 0)
-        my_drives = session_db.execute(stmt).scalars().all()
-        my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
-        return render_template('home.html')
-
+    start_place = request.args.get('start_place')
+    end_place = request.args.get('end_place')
+    date = request.args.get('date')
+    
+    stmt = select(Drive).where(Drive.organizer != session['name'])
+    my_drives = session_db.execute(stmt).scalars().all()
+    my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
+    return render_template('home.html')
 
 @app.route('/create_route', methods=['GET', 'POST'])
 @login_required

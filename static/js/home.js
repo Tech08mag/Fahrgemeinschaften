@@ -1,3 +1,26 @@
+const btn = document.getElementById('filterBtn');
+btn.addEventListener('click', () => applyFilters());
+
+function applyFilters() {
+    const startPlace = document.getElementById('start_place').value;
+    const endPlace = document.getElementById('end_place').value;
+    const date = document.getElementById('date').value;
+    
+    let queryParams = [];
+    if (startPlace) {
+        queryParams.push(`start_place=${encodeURIComponent(startPlace)}`);
+    }
+    if (endPlace) {
+        queryParams.push(`end_place=${encodeURIComponent(endPlace)}`);
+    }
+    if (date) {
+        queryParams.push(`date=${encodeURIComponent(date)}`);
+    }
+    
+    const queryString = queryParams.length ? `?${queryParams.join('&')}` : '';
+    window.location.href = `/home${queryString}`;
+}
+
 async function getmydrives() {
   try {
     const response = await fetch('/api/all_drives');
