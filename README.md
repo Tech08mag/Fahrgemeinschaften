@@ -146,7 +146,6 @@ uv run main.py
 - [ ] Open Street Map integration
 - [ ] Untis Integration für automatisch Stunden
 - [ ] remove flashbang [tailwind](https://tailwindcss.com/docs/installation/tailwind-cli)
-- [ ] fix secruity issues (XSS) and take a look at [Flask Secruity](https://flask.palletsprojects.com/en/stable/web-security/)
 
 ## Preview
 
