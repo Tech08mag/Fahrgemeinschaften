@@ -1,4 +1,4 @@
-from modules.passwords import PW_HANDLER
+from modules.passwords import hashing, verify
 import os
 import json
 from dotenv import load_dotenv
@@ -89,8 +89,7 @@ def login():
             flash("User does not exists")
             return render_template('login.html')
         else:
-            p1 = PW_HANDLER(password)
-            if p1.verify(column_data.password_hash, password):
+            if verify(column_data.password_hash, password):
                 session['email'] = column_data.email
                 session['name'] = column_data.name
                 return redirect(url_for('home'))
@@ -113,8 +112,7 @@ def register():
         password: str = escape(request.form['password'])
         password2: str = escape(request.form['password2'])
         if password == password2 and not session_db.execute(select(User).where(User.email.in_([email]))).scalar_one_or_none() and not session_db.execute(select(User).where(User.name.in_([username]))).scalar_one_or_none():
-            p1 = PW_HANDLER(password)
-            password_hash = p1.hashing()
+            password_hash = hashing(password)
             user = User(name=username, email=email, password_hash=password_hash)
             session_db.add(user)
             session_db.commit()
