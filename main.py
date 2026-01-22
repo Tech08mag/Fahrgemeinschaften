@@ -59,9 +59,17 @@ def create_route():
         time: str = escape(request.form['time'])
         price: float = float(escape(request.form['price']))
         seats: int = int(escape(request.form['seats']))
-        startpoint: str = escape(request.form['startpoint'])
-        destination: str = escape(request.form['destination'])
-        drive = Drive(organizer=column_data.name, date=date, time=time, price=price, seat_amount=seats, startpoint=startpoint, destination=destination)
+
+        start_street: str = escape(request.form['start_street'])
+        start_house_number: int = int(escape(request.form['start_house_number']))
+        start_postal_code: int = int(escape(request.form['start_postal_code']))
+        start_place: str = escape(request.form['start_place'])
+
+        end_street: str = escape(request.form['end_street'])
+        end_house_number: int = int(escape(request.form['end_house_number']))
+        end_postal_code: int = int(escape(request.form['end_postal_code']))
+        end_place: str = escape(request.form['end_place'])
+        drive = Drive(organizer=column_data.name, date=date, time=time, price=price, seat_amount=seats, start_street=start_street, start_house_number=start_house_number, start_postal_code=start_postal_code, start_place=start_place, end_street=end_street, end_house_number=end_house_number, end_postal_code=end_postal_code, end_place=end_place)
         session_db.add(drive)
         session_db.commit()
         flash("Die Fahrt wurde erfolgreich hinzugefügt")
@@ -178,8 +186,14 @@ def all_drives():
             "time": drive.time,
             "price": float(drive.price) if drive.price else None,
             "seat_amount": drive.seat_amount,
-            "startpoint": drive.startpoint,
-            "destination": drive.destination,
+            "start_street": drive.start_street,
+            "start_house_number": drive.start_house_number,
+            "start_postal_code": drive.start_postal_code,
+            "start_place": drive.start_place,
+            "end_street": drive.end_street,
+            "end_house_number": drive.end_house_number,
+            "end_postal_code": drive.end_postal_code,
+            "end_place": drive.end_place,
             "osmlink": drive.osmlink
         })
         return jsonify(drives_list), 200
@@ -201,8 +215,14 @@ def api_my_drives():
             "time": drive.time,
             "price": float(drive.price) if drive.price else None,
             "seat_amount": drive.seat_amount,
-            "startpoint": drive.startpoint,
-            "destination": drive.destination,
+            "start_street": drive.start_street,
+            "start_house_number": drive.start_house_number,
+            "start_postal_code": drive.start_postal_code,
+            "start_place": drive.start_place,
+            "end_street": drive.end_street,
+            "end_house_number": drive.end_house_number,
+            "end_postal_code": drive.end_postal_code,
+            "end_place": drive.end_place,
             "osmlink": drive.osmlink
         })
         return jsonify(drives_list), 200
@@ -258,8 +278,14 @@ def drive_api(id):
         "time": drive.time,
         "price": float(drive.price) if drive.price else None,
         "seat_amount": drive.seat_amount,
-        "startpoint": drive.startpoint,
-        "destination": drive.destination,
+        "start_street": drive.start_street,
+        "start_house_number": drive.start_house_number,
+        "start_postal_code": drive.start_postal_code,
+        "start_place": drive.start_place,
+        "end_street": drive.end_street,
+        "end_house_number": drive.end_house_number,
+        "end_postal_code": drive.end_postal_code,
+        "end_place": drive.end_place,
         "osmlink": drive.osmlink
     }), 200
 
@@ -349,8 +375,14 @@ def get_passenger_drives():
             "time": drive.time,
             "price": float(drive.price) if drive.price else None,
             "seat_amount": drive.seat_amount,
-            "startpoint": drive.startpoint,
-            "destination": drive.destination,
+            "start_street": drive.start_street,
+            "start_house_number": drive.start_house_number,
+            "start_postal_code": drive.start_postal_code,
+            "start_place": drive.start_place,
+            "end_street": drive.end_street,
+            "end_house_number": drive.end_house_number,
+            "end_postal_code": drive.end_postal_code,
+            "end_place": drive.end_place,
             "osmlink": drive.osmlink
         })
     return drive_list

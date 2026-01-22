@@ -54,9 +54,15 @@ getmydrives().then(async(drives) => {
   <div class="p-6 space-y-2">
     <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
       Fahrt von 
-      <span class="font-medium text-gray-700 dark:text-gray-300">${drive.startpoint}</span>
+      <span class="font-medium text-gray-700 dark:text-gray-300">${drive.start_street}</span>
+      <span class="font-medium text-gray-700 dark:text-gray-300">${drive.start_house_number}</span>
+      <span class="font-medium text-gray-700 dark:text-gray-300">${drive.start_postal_code}</span>
+      <span class="font-medium text-gray-700 dark:text-gray-300">${drive.start_place}</span>
       nach 
-      <span class="font-medium text-gray-700 dark:text-gray-300">${drive.destination}</span>
+      <span class="font-medium text-gray-700 dark:text-gray-300">${drive.end_street}</span>
+      <span class="font-medium text-gray-700 dark:text-gray-300">${drive.end_house_number}</span>
+      <span class="font-medium text-gray-700 dark:text-gray-300">${drive.end_postal_code}</span>
+      <span class="font-medium text-gray-700 dark:text-gray-300">${drive.end_place}</span>
       am 
       <span class="font-medium text-gray-700 dark:text-gray-300">${drive.date}</span>
       um 
