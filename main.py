@@ -288,6 +288,26 @@ def drive_api(id):
         "end_place": drive.end_place,
         "osmlink": drive.osmlink
     }), 200
+    if request.method == 'PUT':
+        drive = session_db.get(Drive, id)
+        if not drive:
+            return jsonify({"error": "Drive not found"}), 404
+
+        if drive.organizer != session['name']:
+            return jsonify({"error": "Unauthorized"}), 403
+
+        data = request.get_json()
+
+        for key, value in data.items():
+            if hasattr(drive, key):
+                setattr(drive, key, value)
+
+        session_db.commit()
+
+        return jsonify({
+            "status": "success",
+            "message": "Drive updated"
+        }), 200
 
 @app.route('/api/passenger/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 @login_required
