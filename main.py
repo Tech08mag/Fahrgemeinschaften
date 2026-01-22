@@ -3,10 +3,10 @@ import os
 import json
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
+from markupsafe import escape
 from modules.db import User, Drive, Passenger
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import select, update, delete, create_engine, URL
-
 from functools import wraps
 
 url_object = URL.create(
@@ -55,12 +55,12 @@ def create_route():
     if request.method == 'POST':
         stmt = select(User).where(User.email.in_([session['email']]))
         column_data = session_db.execute(stmt).scalar_one_or_none()
-        date: str = request.form['date']
-        time: str = request.form['time']
-        price: float = float(request.form['price'])
-        seats: int = int(request.form['seats'])
-        startpoint: str = request.form['startpoint']
-        destination: str = request.form['destination']
+        date: str = escape(request.form['date'])
+        time: str = escape(request.form['time'])
+        price: float = float(escape(request.form['price']))
+        seats: int = int(escape(request.form['seats']))
+        startpoint: str = escape(request.form['startpoint'])
+        destination: str = escape(request.form['destination'])
         drive = Drive(organizer=column_data.name, date=date, time=time, price=price, seat_amount=seats, startpoint=startpoint, destination=destination)
         session_db.add(drive)
         session_db.commit()
@@ -71,8 +71,8 @@ def create_route():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        email: str = request.form['email']
-        password: str = request.form['password']
+        email: str = escape(request.form['email'])
+        password: str = escape(request.form['password'])
         stmt = select(User).where(User.email.in_([email]))
         column_data = session_db.execute(stmt).scalar_one_or_none()
         try:
@@ -100,10 +100,10 @@ def logout():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        username: str = request.form['username']
-        email: str = request.form['email']
-        password: str = request.form['password']
-        password2: str = request.form['password2']
+        username: str = escape(request.form['username'])
+        email: str = escape(request.form['email'])
+        password: str = escape(request.form['password'])
+        password2: str = escape(request.form['password2'])
         if password == password2 and not session_db.execute(select(User).where(User.email.in_([email]))).scalar_one_or_none() and not session_db.execute(select(User).where(User.name.in_([username]))).scalar_one_or_none():
             p1 = PW_HANDLER(password)
             password_hash = p1.hashing()
@@ -142,8 +142,8 @@ def passenger():
 @login_required
 def settings():
     if request.method == 'POST':
-        old_password:str = request.form["password-old"]
-        new_password: str = request.form["password-new"]
+        old_password:str = escape(request.form["password-old"])
+        new_password: str = escape(request.form["password-new"])
         stmt = select(User).where(User.email.in_([session['email']]))
         column_data = session_db.execute(stmt).scalar_one_or_none()
         password_hash = column_data.password_hash
