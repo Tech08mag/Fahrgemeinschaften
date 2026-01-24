@@ -1,12 +1,13 @@
 from modules.passwords import hashing, verify
 import os
 import json
+from datetime import datetime
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
 from markupsafe import escape
 from modules.db import User, Drive, Passenger
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import select, update, delete, create_engine, URL, Null
+from sqlalchemy import select, update, delete, create_engine, URL, Null, and_
 from functools import wraps
 
 url_object = URL.create(
@@ -54,6 +55,57 @@ def serialize_drive(drive):
         "osmlink": drive.osmlink
     }
 
+def filter_drives(
+    organizer=None,
+    date=None,
+    time=None,
+    price_min=None,
+    price_max=None,
+    start_postal_code=None,
+    start_place=None,
+    end_postal_code=None,
+    end_place=None
+):
+    """
+    Filters drives directly from the database using SQLAlchemy.
+    
+    Returns a list of Drive objects matching the criteria.
+    """
+    stmt = select(Drive)
+
+    filters = []
+
+    if organizer:
+        filters.append(Drive.organizer.ilike(f"%{organizer}%"))  # partial match
+    if date:
+        if isinstance(date, str):
+            date = datetime.strptime(date, "%Y-%m-%d").date()
+        filters.append(Drive.date == date)
+    if time:
+        if isinstance(time, str):
+            time = datetime.strptime(time, "%H:%M").time()
+        filters.append(Drive.time == time)
+    if price_min is not None:
+        filters.append(Drive.price >= price_min)
+    if price_max is not None:
+        filters.append(Drive.price <= price_max)
+    if start_postal_code:
+        filters.append(Drive.start_postal_code == start_postal_code)
+    if start_place:
+        filters.append(Drive.start_place.ilike(f"%{start_place}%"))
+    if end_postal_code:
+        filters.append(Drive.end_postal_code == end_postal_code)
+    if end_place:
+        filters.append(Drive.end_place.ilike(f"%{end_place}%"))
+
+    if filters:
+        stmt = stmt.where(and_(*filters))
+
+    drives = session_db.execute(stmt).scalars().all()
+    return drives
+
+    
+
 #----- Routes -----
 @app.route('/')
 def index():
@@ -64,8 +116,36 @@ def index():
 def home():    
     stmt = select(Drive).where(Drive.organizer != session['name']).limit(5)
     my_drives = session_db.execute(stmt).scalars().all()
-    my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
+    my_drives: str = jsonify([serialize_drive(drive) for drive in my_drives]).get_data(as_text=True)
     return render_template('home.html', my_drives=my_drives)
+
+@app.route('/search', methods=['GET', 'POST'])
+@login_required
+def search():
+    if request.method == 'POST':
+        organizer: str = escape(request.form.get('organizer', ''))
+        date: str = escape(request.form.get('date', ''))
+        time: str = escape(request.form.get('time', ''))
+        price_min: str = escape(request.form.get('price_min', ''))
+        price_max: str = escape(request.form.get('price_max', ''))
+        start_postal_code: str = escape(request.form.get('start_postal_code', ''))
+        start_place: str = escape(request.form.get('start_place', ''))
+        end_postal_code: str = escape(request.form.get('end_postal_code', ''))
+        end_place: str = escape(request.form.get('end_place', ''))
+        filtered_drives = filter_drives(organizer=organizer if organizer else None,
+                      date=date if date else None,
+                      time=time if time else None,
+                      price_min=float(price_min) if price_min else None,
+                      price_max=float(price_max) if price_max else None,
+                        start_postal_code=start_postal_code if start_postal_code else None,
+                        start_place=start_place if start_place else None,
+                        end_postal_code=end_postal_code if end_postal_code else None,
+                        end_place=end_place if end_place else None)
+        for drive in filtered_drives:
+            serialize_drive(drive)
+        drives_list = filtered_drives
+        return render_template('search.html', drives=drives_list)
+    return render_template('search.html')
 
 @app.route('/create_route', methods=['GET', 'POST'])
 @login_required

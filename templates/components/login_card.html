@@ -1,0 +1,62 @@
+<form method="POST" class="space-y-5">
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block mb-2 text-sm font-medium">
+                        Email
+                    </label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        placeholder="email@email.com"
+                        required
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600
+                               bg-gray-50 dark:bg-gray-700 p-3
+                               focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-500">
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block mb-2 text-sm font-medium">
+                        Passwort
+                    </label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="••••••••"
+                        required
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600
+                               bg-gray-50 dark:bg-gray-700 p-3
+                               focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-500">
+                </div>
+
+                <!-- Options -->
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-sm">
+                    <label class="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                        <input type="checkbox" class="rounded border-gray-300 dark:border-gray-600">
+                        angemeldet bleiben
+                    </label>
+
+                    <a href="#" class="text-blue-600 dark:text-blue-400 hover:underline">
+                        Passwort vergessen?
+                    </a>
+                </div>
+
+                <!-- Submit -->
+                <button
+                    type="submit"
+                    class="w-full rounded-lg bg-blue-600 py-3 font-medium text-white
+                           hover:bg-blue-700 transition">
+                    Anmelden
+                </button>
+
+                <!-- Register -->
+                <p class="text-center text-sm text-gray-500 dark:text-gray-400">
+                    Noch keinen Account?
+                    <a href="/register"
+                       class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                        Registrieren
+                    </a>
+                </p>
+            </form>

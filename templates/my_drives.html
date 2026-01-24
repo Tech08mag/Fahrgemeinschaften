@@ -1,18 +1,9 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/styles/output.css">
-    <script src="{{ url_for('static', filename='js/my_drives.js') }}"></script>
-    <link rel="icon" type="image/x-icon" href="/static/images/Fahrgemeinschaften.ico">
-</head>
-
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
-
 {% extends 'nav.html' %}
 {% block title %}Meine Fahrten{% endblock %}
 {% block content %}
+
+    <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+}
 <!-- MAIN CONTENT -->
 <main class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
 
@@ -54,4 +45,5 @@
 </main>
 </body>
 </html>
+<script src="{{ url_for('static', filename='js/my_drives.js') }}"></script>
 {% endblock %}
