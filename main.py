@@ -151,7 +151,7 @@ def search():
 @login_required
 def create_route():
     if request.method == 'POST':
-        stmt = select(User).where(User.email.in_([session['email']]))
+        stmt = select(User).where(User.email == session['email'])
         column_data = session_db.execute(stmt).scalar_one_or_none()
         date: str = escape(request.form['date'])
         time: str = escape(request.form['time'])
@@ -209,7 +209,7 @@ def register():
         email: str = escape(request.form['email'])
         password: str = escape(request.form['password'])
         password2: str = escape(request.form['password2'])
-        if password == password2 and not session_db.execute(select(User).where(User.email.in_([email]))).scalar_one_or_none() and not session_db.execute(select(User).where(User.name.in_([username]))).scalar_one_or_none():
+        if password == password2 and not session_db.execute(select(User).where(User.email == email)).scalar_one_or_none() and not session_db.execute(select(User).where(User.name == username)).scalar_one_or_none():
             password_hash = hashing(password)
             user = User(name=username, email=email, password_hash=password_hash)
             session_db.add(user)
@@ -436,8 +436,8 @@ def get_passenger_drives():
     for drive_id in drive_ids:
         stmt = select(Drive).where(Drive.id_drive == drive_id)
         drive = session_db.execute(stmt).scalar_one_or_none()
-
-        drive_list.append(serialize_drive(drive))
+        if drive:
+            drive_list.append(serialize_drive(drive))
     return drive_list
 
 if __name__ == "__main__":
