@@ -1,0 +1,51 @@
+{% extends 'nav.html' %}
+{% block title %}Fahrten Suche{% endblock %}
+
+{% block content %}
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+
+<main class="max-w-7xl mx-auto px-6 py-10">
+
+    <!-- PAGE HEADER -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-blue-600 dark:text-blue-400">
+            Fahrten Suche
+        </h1>
+        <p class="text-gray-600 dark:text-gray-400">
+            Stöbere durch verfügbare Fahrgemeinschaften oder filtere nach deinen Kriterien
+        </p>
+    </div>
+
+    <!-- SEARCH FORM -->
+    <form method="POST" class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+        <input type="text" name="organizer" placeholder="Organisator" class="p-2 border rounded dark:bg-gray-700 dark:text-gray-100">
+        <input type="date" name="date" placeholder="Datum" class="p-2 border rounded dark:bg-gray-700 dark:text-gray-100">
+        <input type="time" name="time" placeholder="Uhrzeit" class="p-2 border rounded dark:bg-gray-700 dark:text-gray-100">
+        <input type="number" step="0.01" name="price_min" placeholder="Min Preis" class="p-2 border rounded dark:bg-gray-700 dark:text-gray-100">
+        <input type="number" step="0.01" name="price_max" placeholder="Max Preis" class="p-2 border rounded dark:bg-gray-700 dark:text-gray-100">
+        <input type="text" name="start_postal_code" placeholder="Start PLZ" class="p-2 border rounded dark:bg-gray-700 dark:text-gray-100">
+        <input type="text" name="start_place" placeholder="Start Ort" class="p-2 border rounded dark:bg-gray-700 dark:text-gray-100">
+        <input type="text" name="end_postal_code" placeholder="Ziel PLZ" class="p-2 border rounded dark:bg-gray-700 dark:text-gray-100">
+        <input type="text" name="end_place" placeholder="Ziel Ort" class="p-2 border rounded dark:bg-gray-700 dark:text-gray-100">
+        <button type="submit" class="col-span-1 md:col-span-3 p-2 bg-blue-600 dark:bg-blue-400 text-white font-semibold rounded hover:bg-blue-500 dark:hover:bg-blue-300">
+            Suche
+        </button>
+    </form>
+
+    <!-- DRIVES LIST -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 space-y-6">
+        {% if drives %}
+                {% for drive in drives %}
+                    {% include 'components/drive_card.html' %}
+                {% endfor %}
+        {% else %}
+            <div class="text-center py-12 text-gray-500 dark:text-gray-400">
+                <p class="text-lg font-medium">Keine Fahrten gefunden</p>
+                <p class="text-sm mt-2">Versuche, die Filter zu ändern oder neue Fahrten zu erstellen.</p>
+            </div>
+        {% endif %}
+    </div>
+
+</main>
+
+{% endblock %}

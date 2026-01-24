@@ -140,13 +140,11 @@ uv run main.py
 ## To Do
 
 - [ ] automaticly assign users to drives based on their locactions, prefer the users with least detour
-- [ ] scedule drives (Monday, Thursday, Saturday) repete for a period of time
+- [ ] scedule drives (Monday, Thursday, Saturday) repeate for a period of time
 - [ ] Filters for drives
 - [ ] App mit React Native
 - [ ] Open Street Map integration
 - [ ] Untis Integration für automatisch Stunden
-- [ ] remove flashbang [tailwind](https://tailwindcss.com/docs/installation/tailwind-cli)
-- [ ] fix secruity issues (XSS) and take a look at [Flask Secruity](https://flask.palletsprojects.com/en/stable/web-security/)
 
 ## Preview
 

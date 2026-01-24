@@ -2,9 +2,7 @@ import os
 from dotenv import load_dotenv
 from sqlalchemy import create_engine, Column, Integer, String, URL, DECIMAL
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.orm import Mapped
 
 load_dotenv()
 
@@ -37,12 +35,20 @@ class Drive(Base):
     time: Column[str] = Column(String)
     price: Column[float] = Column(DECIMAL)
     seat_amount: Column[int] = Column(Integer)
-    startpoint: Column[str] = Column(String)
-    destination: Column[str] = Column(String)
+
+    start_street: Column[str] = Column(String)
+    start_house_number: Column[int] = Column(Integer)
+    start_postal_code: Column[int] = Column(Integer)
+    start_place: Column[str] = Column(String)
+
+    end_street: Column[str] = Column(String)
+    end_house_number: Column[int] = Column(Integer)
+    end_postal_code: Column[int] = Column(Integer)
+    end_place: Column[str] = Column(String)
     osmlink: Column[str] = Column(String)
 
     def __repr__(self):
-        return f"<User(id_drive='{self.id_drive}', organizer='{self.organizer}', date='{self.date}', time='{self.time}', price='{self.price}', seat_number='{self.seat_amount}', startpoint='{self.startpoint}', destination='{self.destination}', orm_link='{self.osmlink}'>"
+        return f"<Drive(id_drive='{self.id_drive}', organizer='{self.organizer}', date='{self.date}', time='{self.time}', price='{self.price}', seat_amount='{self.seat_amount}', start_street='{self.start_street}', start_house_number='{self.start_house_number}', start_postal_code='{self.start_postal_code}', start_place='{self.start_place}', end_street='{self.end_street}', end_house_number='{self.end_house_number}', end_postal_code='{self.end_postal_code}', end_place='{self.end_place}', osmlink='{self.osmlink}'>"
 
 class Passenger(Base):
     __tablename__ = 'passenger'

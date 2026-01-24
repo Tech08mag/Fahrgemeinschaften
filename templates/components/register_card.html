@@ -1,0 +1,83 @@
+<form method="POST" class="space-y-5">
+
+                <!-- Username -->
+                <div>
+                    <label for="username" class="block mb-2 text-sm font-medium">
+                        Nutzername
+                    </label>
+                    <input
+                        type="text"
+                        name="username"
+                        id="username"
+                        placeholder="Dein Nutzername"
+                        required
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600
+                               bg-gray-50 dark:bg-gray-700 p-3
+                               focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-500">
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label for="email" class="block mb-2 text-sm font-medium">
+                        Email
+                    </label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        placeholder="mail@mail.com"
+                        required
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600
+                               bg-gray-50 dark:bg-gray-700 p-3
+                               focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-500">
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="password" class="block mb-2 text-sm font-medium">
+                        Passwort
+                    </label>
+                    <input
+                        type="password"
+                        name="password"
+                        id="password"
+                        placeholder="••••••••"
+                        required
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600
+                               bg-gray-50 dark:bg-gray-700 p-3
+                               focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-500">
+                </div>
+
+                <!-- Password Confirm -->
+                <div>
+                    <label for="password2" class="block mb-2 text-sm font-medium">
+                        Passwort bestätigen
+                    </label>
+                    <input
+                        type="password"
+                        name="password2"
+                        id="password2"
+                        placeholder="••••••••"
+                        required
+                        class="w-full rounded-lg border border-gray-300 dark:border-gray-600
+                               bg-gray-50 dark:bg-gray-700 p-3
+                               focus:outline-none focus:ring-2 focus:ring-blue-600 dark:focus:ring-blue-500">
+                </div>
+
+                <!-- Submit -->
+                <button
+                    type="submit"
+                    class="w-full rounded-lg bg-blue-600 py-3 font-medium text-white
+                           hover:bg-blue-700 transition">
+                    Registrieren
+                </button>
+
+                <!-- Login Link -->
+                <p class="text-center text-sm text-gray-500 dark:text-gray-400">
+                    Bereits einen Account?
+                    <a href="/login"
+                       class="font-medium text-blue-600 dark:text-blue-400 hover:underline">
+                        Jetzt einloggen
+                    </a>
+                </p>
+            </form>

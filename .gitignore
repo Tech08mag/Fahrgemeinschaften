@@ -1,7 +1,5 @@
-
+uv.lock
 node_modules/
-
-
 data/
 db_test/
 # Byte-compiled / optimized / DLL files

@@ -10,8 +10,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             document.getElementById("date").value = drive.date;
             document.getElementById("time").value = drive.time;
-            document.getElementById("startpoint").value = drive.startpoint;
-            document.getElementById("destination").value = drive.destination;
+            document.getElementById("start_street").value = drive.start_street;
+            document.getElementById("start_house_number").value = drive.start_house_number;
+            document.getElementById("start_postal_code").value = drive.start_postal_code;
+            document.getElementById("start_place").value = drive.start_place;
+            
+            document.getElementById("end_street").value = drive.end_street;
+            document.getElementById("end_house_number").value = drive.end_house_number;
+            document.getElementById("end_postal_code").value = drive.end_postal_code;
+            document.getElementById("end_place").value = drive.end_place;
             document.getElementById("seats").value = drive.seat_amount;
             document.getElementById("price").value = drive.price;
 
@@ -31,8 +38,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         const updatedDrive = {
             date: document.getElementById("date").value,
             time: document.getElementById("time").value,
-            startpoint: document.getElementById("startpoint").value,
-            destination: document.getElementById("destination").value,
+            start_street: document.getElementById("start_street").value,
+            start_house_number: document.getElementById("start_house_number").value,
+            start_postal_code: document.getElementById("start_postal_code").value,
+            start_place: document.getElementById("start_place").value,
+            end_street: document.getElementById("end_street").value,
+            end_house_number: document.getElementById("end_house_number").value,
+            end_postal_code: document.getElementById("end_postal_code").value,
+            end_place: document.getElementById("end_place").value,
             seats: document.getElementById("seats").value,
             price: document.getElementById("price").value
         };

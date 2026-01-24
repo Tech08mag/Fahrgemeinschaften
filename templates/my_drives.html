@@ -1,17 +1,9 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/styles/output.css">
-    <script src="{{ url_for('static', filename='js/my_drives.js') }}"></script>
-</head>
-
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
-
-{% extends 'base.html' %}
+{% extends 'nav.html' %}
 {% block title %}Meine Fahrten{% endblock %}
 {% block content %}
+
+    <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
+}
 <!-- MAIN CONTENT -->
 <main class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
 
@@ -26,42 +18,11 @@
             </p>
         </div>
 
-        <!-- CTA BUTTON -->
-        <a href="{{ url_for('create_route') }}"
-           class="mt-4 sm:mt-0 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5
-                  text-white font-medium hover:bg-blue-700 transition">
-            + Neue Fahrt
-        </a>
+        {% include 'components/new_drive_button.html' %}
     </div>
-
     <!-- DRIVES CARD -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-        <div class="p-6">
-
-            <!-- JS injects drives here -->
-            <ul id="drives-list" class="space-y-4"></ul>
-
-            <!-- EMPTY STATE -->
-            <div id="empty-state" class="hidden text-center py-12 text-gray-500 dark:text-gray-400">
-                <p class="text-lg font-medium">Keine Fahrten vorhanden</p>
-                <p class="text-sm mt-2">Erstelle deine erste Fahrt, um loszulegen.</p>
-            </div>
-
-        </div>
-    </div>
-
+    {% include 'components/my_drives_card.html' %}
 </main>
-
-<!-- Mobile Menu Script -->
-<script>
-    const btn = document.getElementById('menuBtn');
-    const menu = document.getElementById('mobileMenu');
-
-    btn.addEventListener('click', () => {
-        menu.classList.toggle('hidden');
-    });
-</script>
-
 </body>
 </html>
 {% endblock %}

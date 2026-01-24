@@ -1,12 +1,13 @@
-from modules.passwords import PW_HANDLER
+from modules.passwords import hashing, verify
 import os
 import json
+from datetime import datetime
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
 from markupsafe import escape
 from modules.db import User, Drive, Passenger
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import select, update, delete, create_engine, URL
+from sqlalchemy import select, update, delete, create_engine, URL, Null, and_
 from functools import wraps
 
 url_object = URL.create(
@@ -35,6 +36,76 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def serialize_drive(drive):
+    return {
+        "id_drive": drive.id_drive,
+        "organizer": drive.organizer,
+        "date": drive.date,
+        "time": drive.time,
+        "price": float(drive.price) if drive.price != Null else 0,
+        "seat_amount": drive.seat_amount,
+        "start_street": drive.start_street,
+        "start_house_number": drive.start_house_number,
+        "start_postal_code": drive.start_postal_code,
+        "start_place": drive.start_place,
+        "end_street": drive.end_street,
+        "end_house_number": drive.end_house_number,
+        "end_postal_code": drive.end_postal_code,
+        "end_place": drive.end_place,
+        "osmlink": drive.osmlink
+    }
+
+def filter_drives(
+    organizer=None,
+    date=None,
+    time=None,
+    price_min=None,
+    price_max=None,
+    start_postal_code=None,
+    start_place=None,
+    end_postal_code=None,
+    end_place=None
+):
+    """
+    Filters drives directly from the database using SQLAlchemy.
+    
+    Returns a list of Drive objects matching the criteria.
+    """
+    stmt = select(Drive)
+
+    filters = []
+
+    if organizer:
+        filters.append(Drive.organizer.ilike(f"%{organizer}%"))  # partial match
+    if date:
+        if isinstance(date, str):
+            date = datetime.strptime(date, "%Y-%m-%d").date()
+        filters.append(Drive.date == date)
+    if time:
+        if isinstance(time, str):
+            time = datetime.strptime(time, "%H:%M").time()
+        filters.append(Drive.time == time)
+    if price_min is not None:
+        filters.append(Drive.price >= price_min)
+    if price_max is not None:
+        filters.append(Drive.price <= price_max)
+    if start_postal_code:
+        filters.append(Drive.start_postal_code == start_postal_code)
+    if start_place:
+        filters.append(Drive.start_place.ilike(f"%{start_place}%"))
+    if end_postal_code:
+        filters.append(Drive.end_postal_code == end_postal_code)
+    if end_place:
+        filters.append(Drive.end_place.ilike(f"%{end_place}%"))
+
+    if filters:
+        stmt = stmt.where(and_(*filters))
+
+    drives = session_db.execute(stmt).scalars().all()
+    return drives
+
+    
+
 #----- Routes -----
 @app.route('/')
 def index():
@@ -42,12 +113,39 @@ def index():
 
 @app.route('/home', methods=['GET', 'POST'])
 @login_required
-def home():
-        stmt = select(Drive).where(Drive.organizer != session['name'])
-        my_drives = session_db.execute(stmt).scalars().all()
-        my_drives = json.dumps([drive.__dict__ for drive in my_drives], default=str)
-        return render_template('home.html', my_drives=my_drives)
+def home():    
+    stmt = select(Drive).where(Drive.organizer != session['name']).limit(5)
+    my_drives = session_db.execute(stmt).scalars().all()
+    my_drives: str = jsonify([serialize_drive(drive) for drive in my_drives]).get_data(as_text=True)
+    return render_template('home.html', my_drives=my_drives)
 
+@app.route('/search', methods=['GET', 'POST'])
+@login_required
+def search():
+    if request.method == 'POST':
+        organizer: str = escape(request.form.get('organizer', ''))
+        date: str = escape(request.form.get('date', ''))
+        time: str = escape(request.form.get('time', ''))
+        price_min: str = escape(request.form.get('price_min', ''))
+        price_max: str = escape(request.form.get('price_max', ''))
+        start_postal_code: str = escape(request.form.get('start_postal_code', ''))
+        start_place: str = escape(request.form.get('start_place', ''))
+        end_postal_code: str = escape(request.form.get('end_postal_code', ''))
+        end_place: str = escape(request.form.get('end_place', ''))
+        filtered_drives = filter_drives(organizer=organizer if organizer else None,
+                      date=date if date else None,
+                      time=time if time else None,
+                      price_min=float(price_min) if price_min else None,
+                      price_max=float(price_max) if price_max else None,
+                        start_postal_code=start_postal_code if start_postal_code else None,
+                        start_place=start_place if start_place else None,
+                        end_postal_code=end_postal_code if end_postal_code else None,
+                        end_place=end_place if end_place else None)
+        for drive in filtered_drives:
+            serialize_drive(drive)
+        drives_list = filtered_drives
+        return render_template('search.html', drives=drives_list)
+    return render_template('search.html')
 
 @app.route('/create_route', methods=['GET', 'POST'])
 @login_required
@@ -59,9 +157,17 @@ def create_route():
         time: str = escape(request.form['time'])
         price: float = float(escape(request.form['price']))
         seats: int = int(escape(request.form['seats']))
-        startpoint: str = escape(request.form['startpoint'])
-        destination: str = escape(request.form['destination'])
-        drive = Drive(organizer=column_data.name, date=date, time=time, price=price, seat_amount=seats, startpoint=startpoint, destination=destination)
+
+        start_street: str = escape(request.form['start_street'])
+        start_house_number: int = int(escape(request.form['start_house_number']))
+        start_postal_code: int = int(escape(request.form['start_postal_code']))
+        start_place: str = escape(request.form['start_place'])
+
+        end_street: str = escape(request.form['end_street'])
+        end_house_number: int = int(escape(request.form['end_house_number']))
+        end_postal_code: int = int(escape(request.form['end_postal_code']))
+        end_place: str = escape(request.form['end_place'])
+        drive = Drive(organizer=column_data.name, date=date, time=time, price=price, seat_amount=seats, start_street=start_street, start_house_number=start_house_number, start_postal_code=start_postal_code, start_place=start_place, end_street=end_street, end_house_number=end_house_number, end_postal_code=end_postal_code, end_place=end_place)
         session_db.add(drive)
         session_db.commit()
         flash("Die Fahrt wurde erfolgreich hinzugefügt")
@@ -81,8 +187,7 @@ def login():
             flash("User does not exists")
             return render_template('login.html')
         else:
-            p1 = PW_HANDLER(password)
-            if p1.verify(column_data.password_hash, password):
+            if verify(column_data.password_hash, password):
                 session['email'] = column_data.email
                 session['name'] = column_data.name
                 return redirect(url_for('home'))
@@ -105,8 +210,7 @@ def register():
         password: str = escape(request.form['password'])
         password2: str = escape(request.form['password2'])
         if password == password2 and not session_db.execute(select(User).where(User.email.in_([email]))).scalar_one_or_none() and not session_db.execute(select(User).where(User.name.in_([username]))).scalar_one_or_none():
-            p1 = PW_HANDLER(password)
-            password_hash = p1.hashing()
+            password_hash = hashing(password)
             user = User(name=username, email=email, password_hash=password_hash)
             session_db.add(user)
             session_db.commit()
@@ -147,14 +251,15 @@ def settings():
         stmt = select(User).where(User.email.in_([session['email']]))
         column_data = session_db.execute(stmt).scalar_one_or_none()
         password_hash = column_data.password_hash
-        p1 = PW_HANDLER(old_password)
-        if p1.verify(password_hash, old_password):
-            p2 = PW_HANDLER(new_password)
-            new_password_hash = p2.hashing()
+        if verify(password_hash, old_password):
+            p2 = hashing(new_password)
+            new_password_hash = p2
             upd = update(User).where(User.email.in_([session['email']])).values(password_hash=new_password_hash)
             session_db.execute(upd)
             session_db.commit()
             return render_template('settings.html')
+        else:
+            flash("Altes Passwort ist falsch")
     return render_template('settings.html')
 
 @app.errorhandler(404)
@@ -167,21 +272,11 @@ def not_found(e):
 @app.route('/api/all_drives', methods=['GET'])
 @login_required
 def all_drives():
-        stmt = select(Drive).where(Drive.organizer != session['name'])
+        stmt = select(Drive).where(Drive.organizer != session['name'] and Drive.seat_amount > 0)
         drives = session_db.execute(stmt).scalars().all()
         drives_list = []
         for drive in drives:
-            drives_list.append({
-            "id_drive": drive.id_drive,
-            "organizer": drive.organizer,
-            "date": drive.date,
-            "time": drive.time,
-            "price": float(drive.price) if drive.price else None,
-            "seat_amount": drive.seat_amount,
-            "startpoint": drive.startpoint,
-            "destination": drive.destination,
-            "osmlink": drive.osmlink
-        })
+            drives_list.append(serialize_drive(drive))
         return jsonify(drives_list), 200
 
 @app.route('/api/my_drives', methods=['GET'])
@@ -194,17 +289,7 @@ def api_my_drives():
         drives = session_db.execute(stmt).scalars().all()
         drives_list = []
         for drive in drives:
-            drives_list.append({
-            "id_drive": drive.id_drive,
-            "organizer": drive.organizer,
-            "date": drive.date,
-            "time": drive.time,
-            "price": float(drive.price) if drive.price else None,
-            "seat_amount": drive.seat_amount,
-            "startpoint": drive.startpoint,
-            "destination": drive.destination,
-            "osmlink": drive.osmlink
-        })
+            drives_list.append(serialize_drive(drive))
         return jsonify(drives_list), 200
 
 @app.route('/api/drive/passenger/<int:id>', methods=['POST'])
@@ -251,17 +336,27 @@ def drive_api(id):
         if not drive:
             return jsonify({"error": "Drive not found"}), 404
 
+        return jsonify(serialize_drive(drive)), 200
+    if request.method == 'PUT':
+        drive = session_db.get(Drive, id)
+        if not drive:
+            return jsonify({"error": "Drive not found"}), 404
+
+        if drive.organizer != session['name']:
+            return jsonify({"error": "Unauthorized"}), 403
+
+        data = request.get_json()
+
+        for key, value in data.items():
+            if hasattr(drive, key):
+                setattr(drive, key, value)
+
+        session_db.commit()
+
         return jsonify({
-        "id_drive": drive.id_drive,
-        "organizer": drive.organizer,
-        "date": drive.date,
-        "time": drive.time,
-        "price": float(drive.price) if drive.price else None,
-        "seat_amount": drive.seat_amount,
-        "startpoint": drive.startpoint,
-        "destination": drive.destination,
-        "osmlink": drive.osmlink
-    }), 200
+            "status": "success",
+            "message": "Drive updated"
+        }), 200
 
 @app.route('/api/passenger/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 @login_required
@@ -342,17 +437,7 @@ def get_passenger_drives():
         stmt = select(Drive).where(Drive.id_drive == drive_id)
         drive = session_db.execute(stmt).scalar_one_or_none()
 
-        drive_list.append({
-            "id_drive": drive.id_drive,
-            "organizer": drive.organizer,
-            "date": drive.date,
-            "time": drive.time,
-            "price": float(drive.price) if drive.price else None,
-            "seat_amount": drive.seat_amount,
-            "startpoint": drive.startpoint,
-            "destination": drive.destination,
-            "osmlink": drive.osmlink
-        })
+        drive_list.append(serialize_drive(drive))
     return drive_list
 
 if __name__ == "__main__":
