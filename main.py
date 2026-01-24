@@ -244,13 +244,13 @@ def settings():
     if request.method == 'POST':
         old_password:str = escape(request.form["password-old"])
         new_password: str = escape(request.form["password-new"])
-        stmt = select(User).where(User.email.in_([session['email']]))
+        stmt = select(User).where(User.email == session['email'])
         column_data = session_db.execute(stmt).scalar_one_or_none()
         password_hash = column_data.password_hash
         if verify(password_hash, old_password):
             p2 = hashing(new_password)
             new_password_hash = p2
-            upd = update(User).where(User.email.in_([session['email']])).values(password_hash=new_password_hash)
+            upd = update(User).where(User.email == session['email']).values(password_hash=new_password_hash)
             session_db.execute(upd)
             session_db.commit()
             return render_template('settings.html')
@@ -315,6 +315,7 @@ def delete_drive(id):
         organizer = session['name']
         stmt = select(Drive).where(Drive.id_drive == id)
         if session_db.execute(stmt).scalar_one_or_none().organizer == organizer:
+            os.remove(f'static/drive_images/{id}.png')
             stmt = delete(Drive).where(Drive.id_drive == id)
             session_db.execute(stmt)
             session_db.commit()

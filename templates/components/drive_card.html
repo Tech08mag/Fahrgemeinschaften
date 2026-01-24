@@ -54,12 +54,12 @@
       <!-- Image on the right -->
       <div class="flex-shrink-0 w-full lg:w-1/2">
         <img 
-          src="{{ url_for('static', filename='drive_images/' + drive.start_street + '_' + drive.start_house_number|string + ',_' + drive.start_postal_code|string + '_' + drive.start_place + '_to_' + drive.end_street + '_' + drive.end_house_number|string + ',_' + drive.end_postal_code|string + '_' + drive.end_place + '.png') }}" 
+          src="{{ url_for('static', filename='drive_images/' + drive.start_street + '_' + drive.start_house_number|string + '_' + drive.start_postal_code|string + '_' + drive.start_place + '_to_' + drive.end_street + '_' + drive.end_house_number|string + '_' + drive.end_postal_code|string + '_' + drive.end_place + '.png') }}" 
           alt="{{ drive.start_street }} {{ drive.start_house_number }}, {{ drive.start_postal_code }} {{ drive.start_place }} to {{ drive.end_street }} {{ drive.end_house_number }}, {{ drive.end_postal_code }} {{ drive.end_place }}" 
           class="w-full h-40 sm:h-48 md:h-56 lg:h-full object-cover"
           loading="lazy"
-        />
-      </div>
+          />
+        </div>
 
     </div>
     {% endfor %}
