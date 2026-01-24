@@ -1,0 +1,15 @@
+ <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+        <div class="p-6">
+
+            <!-- JS injects drives here -->
+            <ul id="drives-list" class="space-y-4"></ul>
+
+            <!-- EMPTY STATE -->
+            <div id="empty-state" class="hidden text-center py-12 text-gray-500 dark:text-gray-400">
+                <p class="text-lg font-medium">Keine Fahrten vorhanden</p>
+                <p class="text-sm mt-2">Erstelle deine erste Fahrt, um loszulegen.</p>
+            </div>
+
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/my_drives.js') }}"></script>

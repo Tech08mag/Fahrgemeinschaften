@@ -33,26 +33,11 @@
     </form>
 
     <!-- DRIVES LIST -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 space-y-6">
         {% if drives %}
-            <div class="space-y-4">
                 {% for drive in drives %}
-                    <div class="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600">
-                        <h2 class="text-xl font-semibold text-blue-600 dark:text-blue-400">
-                            {{ drive.start_place }} → {{ drive.end_place }}
-                        </h2>
-                        <p class="text-gray-700 dark:text-gray-300">
-                            Organisator: {{ drive.organizer }}
-                        </p>
-                        <p class="text-gray-700 dark:text-gray-300">
-                            Datum: {{ drive.date }} | Uhrzeit: {{ drive.time }}
-                        </p>
-                        <p class="text-gray-700 dark:text-gray-300">
-                            Preis: €{{ drive.price }}
-                        </p>
-                    </div>
+                    {% include 'components/drive_card.html' %}
                 {% endfor %}
-            </div>
         {% else %}
             <div class="text-center py-12 text-gray-500 dark:text-gray-400">
                 <p class="text-lg font-medium">Keine Fahrten gefunden</p>

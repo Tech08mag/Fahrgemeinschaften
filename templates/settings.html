@@ -21,38 +21,7 @@
                     </p>
                 </div>
 
-                <!-- Form -->
-                <form method="post" class="space-y-4">
-                    <div>
-                        <label class="block mb-1 text-sm font-medium">
-                            Aktuelles Passwort
-                        </label>
-                        <input type="password" name="password-old" placeholder="Aktuelles Passwort"
-                               class="w-full rounded-lg border border-gray-300 dark:border-gray-600
-                                      bg-gray-50 dark:bg-gray-700 px-3 py-2
-                                      focus:outline-none focus:ring-2 focus:ring-blue-600" required>
-                    </div>
-
-                    <!-- New password -->
-                    <div>
-                        <label class="block mb-1 text-sm font-medium">
-                            Neues Passwort
-                        </label>
-                        <input type="password" name="password-new" placeholder="Neues Passwort"
-                               class="w-full rounded-lg border border-gray-300 dark:border-gray-600
-                                      bg-gray-50 dark:bg-gray-700 px-3 py-2
-                                      focus:outline-none focus:ring-2 focus:ring-blue-600" required>
-                    </div>
-
-                    <!-- Submit -->
-                    <button type="submit"
-                            class="w-full bg-blue-600 hover:bg-blue-700
-                                   text-white font-medium rounded-lg
-                                   px-5 py-2.5 transition">
-                        Änderungen speichern
-                    </button>
-
-                </form>
+                {% include 'components/settings_card.html' %}
 
             </div>
         </div>

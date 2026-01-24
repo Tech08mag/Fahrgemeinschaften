@@ -3,53 +3,12 @@
 
 {% block content %}
 <!-- 404 CONTENT -->
- <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen"></body>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
 <section class="min-h-screen flex items-center justify-center px-6 py-10">
-
     <div class="w-full max-w-lg">
-
-        <!-- Card -->
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
-
-            <div class="p-6 space-y-6 text-center">
-
-                <!-- Error code -->
-                <div class="text-6xl font-extrabold text-blue-600 dark:text-blue-400">
-                    404
-                </div>
-
-                <!-- Message -->
-                <div>
-                    <h1 class="text-2xl font-bold">
-                        Seite nicht gefunden
-                    </h1>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                        Die angeforderte Seite existiert leider nicht oder wurde verschoben.
-                    </p>
-                </div>
-
-                <!-- Action -->
-                <a href="/"
-                   class="inline-block bg-blue-600 hover:bg-blue-700
-                          text-white font-medium rounded-lg
-                          px-6 py-2.5 transition">
-                    Zur Startseite
-                </a>
-
-            </div>
-        </div>
-
+        {% include 'components/404_card.html' %}
     </div>
-
 </section>
-    <title>Registrieren – Fahrgemeinschaften</title>
-<!-- Mobile Menu Script -->
-<script>
-    const btn = document.getElementById('menuBtn');
-    const menu = document.getElementById('mobileMenu');
-    btn.addEventListener('click', () => menu.classList.toggle('hidden'));
-</script>
-
 </body>
 </html>
-{% endblock %}    <title>Registrieren – Fahrgemeinschaften</title>
+{% endblock %}
