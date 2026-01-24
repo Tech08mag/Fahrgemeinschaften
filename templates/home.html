@@ -8,7 +8,7 @@
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen">
-{% extends 'base.html' %}
+{% extends 'nav.html' %}
 {% block title %}Home{% endblock %}
 {% block content %}
 
@@ -25,64 +25,6 @@
         </p>
     </div>
 
-    <!-- FILTER CARD -->
-    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 mb-8 p-6">
-        <h2 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-4">
-            Filter Fahrten
-        </h2>
-
-        <form id="filter-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-
-            <!-- Date -->
-            <div>
-                <label class="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-400">Datum</label>
-                <input type="date" name="filter_date" 
-                       class="w-full rounded-lg border px-3 py-2.5 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
-            </div>
-
-            <!-- Start Ort -->
-            <div>
-                <label class="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-400">Start Ort</label>
-                <input type="text" name="filter_start" placeholder="Berlin"
-                       class="w-full rounded-lg border px-3 py-2.5 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
-            </div>
-
-            <!-- Ziel Ort -->
-            <div>
-                <label class="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-400">Ziel Ort</label>
-                <input type="text" name="filter_end" placeholder="Hamburg"
-                       class="w-full rounded-lg border px-3 py-2.5 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
-            </div>
-
-            <!-- Preis -->
-            <div>
-                <label class="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-400">Max Preis (€)</label>
-                <input type="number" name="filter_price" min="0" placeholder="50"
-                       class="w-full rounded-lg border px-3 py-2.5 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
-            </div>
-
-            <!-- Freie Plätze -->
-            <div>
-                <label class="block text-sm font-medium mb-1 text-gray-600 dark:text-gray-400">Min. Plätze</label>
-                <input type="number" name="filter_seats" min="1" placeholder="1"
-                       class="w-full rounded-lg border px-3 py-2.5 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200">
-            </div>
-
-            <!-- Buttons -->
-            <div class="flex gap-2 sm:col-span-2 lg:col-span-4 mt-2">
-                <button type="submit" id="filterBtn"
-                        class="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-5 py-2.5 font-medium transition">
-                    Anwenden
-                </button>
-                <button type="reset"
-                        class="flex-1 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-100 rounded-lg px-5 py-2.5 font-medium transition">
-                    Zurücksetzen
-                </button>
-            </div>
-
-        </form>
-    </div>
-
     <!-- DRIVES CARD -->
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
         <div class="p-6">
@@ -95,14 +37,6 @@
     </div>
 
 </main>
-
-<!-- Mobile Menu Script -->
-<script>
-    const btn = document.getElementById('menuBtn');
-    const menu = document.getElementById('mobileMenu');
-    btn.addEventListener('click', () => menu.classList.toggle('hidden'));
-</script>
-
 <script src="{{ url_for('static', filename='/js/home.js') }}"></script>
 {% endblock %}
 </body>

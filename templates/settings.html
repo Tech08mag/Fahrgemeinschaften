@@ -7,7 +7,7 @@
     <link rel="icon" type="image/x-icon" href="/static/images/Fahrgemeinschaften.ico">    
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 min-h-screen"></body>
-{% extends 'base.html' %}
+{% extends 'nav.html' %}
 {% block title %}Einstellungen{% endblock %}
 {% block content %}
 <!-- MAIN CONTENT -->
@@ -66,14 +66,6 @@
         </div>
     </div>
 </section>
-
-<!-- Mobile Menu Script -->
-<script>
-    const btn = document.getElementById('menuBtn');
-    const menu = document.getElementById('mobileMenu');
-    btn.addEventListener('click', () => menu.classList.toggle('hidden'));
-</script>
-
 </body>
 </html>
 {% endblock %}
