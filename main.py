@@ -123,6 +123,7 @@ def search():
         price_max: str = escape(request.form.get('price_max', ''))
         start_postal_code: str = escape(request.form.get('start_postal_code', ''))
         start_place: str = escape(request.form.get('start_place', ''))
+        end_place: str = escape(request.form.get('end_place', ''))
         end_postal_code: str = escape(request.form.get('end_postal_code', ''))
         end_place: str = escape(request.form.get('end_place', ''))
         filtered_drives = filter_drives(organizer=organizer if organizer else None,
