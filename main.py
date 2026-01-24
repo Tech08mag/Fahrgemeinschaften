@@ -1,14 +1,12 @@
 from modules.passwords import hashing, verify
 import os
 import json
-from datetime import datetime
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
 from markupsafe import escape
 from modules.db import User, Drive, Passenger
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import select, update, delete, create_engine, URL, Null, and_
-from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy import create_engine, select, and_, update, delete, URL, Null
 from functools import wraps
 
 url_object = URL.create(
