@@ -1,13 +1,13 @@
 from modules.passwords import hashing, verify
+from modules.map import create_drive_map
 import os
 import json
-from datetime import datetime
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, session, redirect, url_for, flash, jsonify
 from markupsafe import escape
 from modules.db import User, Drive, Passenger
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import select, update, delete, create_engine, URL, Null, and_
+from sqlalchemy import create_engine, select, and_, update, delete, URL, Null
 from functools import wraps
 
 url_object = URL.create(
@@ -52,7 +52,6 @@ def serialize_drive(drive):
         "end_house_number": drive.end_house_number,
         "end_postal_code": drive.end_postal_code,
         "end_place": drive.end_place,
-        "osmlink": drive.osmlink
     }
 
 def filter_drives(
@@ -78,12 +77,8 @@ def filter_drives(
     if organizer:
         filters.append(Drive.organizer.ilike(f"%{organizer}%"))  # partial match
     if date:
-        if isinstance(date, str):
-            date = datetime.strptime(date, "%Y-%m-%d").date()
         filters.append(Drive.date == date)
     if time:
-        if isinstance(time, str):
-            time = datetime.strptime(time, "%H:%M").time()
         filters.append(Drive.time == time)
     if price_min is not None:
         filters.append(Drive.price >= price_min)
@@ -103,8 +98,6 @@ def filter_drives(
 
     drives = session_db.execute(stmt).scalars().all()
     return drives
-
-    
 
 #----- Routes -----
 @app.route('/')
@@ -151,7 +144,7 @@ def search():
 @login_required
 def create_route():
     if request.method == 'POST':
-        stmt = select(User).where(User.email.in_([session['email']]))
+        stmt = select(User).where(User.email == session['email'])
         column_data = session_db.execute(stmt).scalar_one_or_none()
         date: str = escape(request.form['date'])
         time: str = escape(request.form['time'])
@@ -167,6 +160,9 @@ def create_route():
         end_house_number: int = int(escape(request.form['end_house_number']))
         end_postal_code: int = int(escape(request.form['end_postal_code']))
         end_place: str = escape(request.form['end_place'])
+        start_address = f"{start_street} {start_house_number} {start_postal_code} {start_place}"
+        end_address = f"{end_street} {end_house_number} {end_postal_code} {end_place}"
+        create_drive_map(start_address, end_address)
         drive = Drive(organizer=column_data.name, date=date, time=time, price=price, seat_amount=seats, start_street=start_street, start_house_number=start_house_number, start_postal_code=start_postal_code, start_place=start_place, end_street=end_street, end_house_number=end_house_number, end_postal_code=end_postal_code, end_place=end_place)
         session_db.add(drive)
         session_db.commit()
@@ -209,7 +205,7 @@ def register():
         email: str = escape(request.form['email'])
         password: str = escape(request.form['password'])
         password2: str = escape(request.form['password2'])
-        if password == password2 and not session_db.execute(select(User).where(User.email.in_([email]))).scalar_one_or_none() and not session_db.execute(select(User).where(User.name.in_([username]))).scalar_one_or_none():
+        if password == password2 and not session_db.execute(select(User).where(User.email == email)).scalar_one_or_none() and not session_db.execute(select(User).where(User.name == username)).scalar_one_or_none():
             password_hash = hashing(password)
             user = User(name=username, email=email, password_hash=password_hash)
             session_db.add(user)
@@ -361,9 +357,7 @@ def drive_api(id):
 @app.route('/api/passenger/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 @login_required
 def passenger_api(id):
-
     user_name = session['name']
-
     drive = session_db.get(Drive, id)
     if not drive:
         return jsonify({"error": "Drive not found"}), 404
@@ -436,8 +430,8 @@ def get_passenger_drives():
     for drive_id in drive_ids:
         stmt = select(Drive).where(Drive.id_drive == drive_id)
         drive = session_db.execute(stmt).scalar_one_or_none()
-
-        drive_list.append(serialize_drive(drive))
+        if drive:
+            drive_list.append(serialize_drive(drive))
     return drive_list
 
 if __name__ == "__main__":

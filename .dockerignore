@@ -1,5 +1,5 @@
 .venv
-.replit
+*.png
 data/
 db_test/
 # Byte-compiled / optimized / DLL files

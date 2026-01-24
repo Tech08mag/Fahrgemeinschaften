@@ -140,9 +140,9 @@ uv run main.py
 ## To Do
 
 - [ ] automaticly assign users to drives based on their locactions, prefer the users with least detour
+- [ ] generate Image for the route
 - [ ] scedule drives (Monday, Thursday, Saturday) repeate for a period of time
-- [ ] Filters for drives
-- [ ] App mit React Native
+- [ ] App mit [cordova](https://cordova.apache.org/#getstarted)
 - [ ] Open Street Map integration
 - [ ] Untis Integration für automatisch Stunden
 
