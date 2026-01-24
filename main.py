@@ -1,4 +1,5 @@
 from modules.passwords import hashing, verify
+from modules.map import create_drive_map
 import os
 import json
 from dotenv import load_dotenv
@@ -51,7 +52,6 @@ def serialize_drive(drive):
         "end_house_number": drive.end_house_number,
         "end_postal_code": drive.end_postal_code,
         "end_place": drive.end_place,
-        "osmlink": drive.osmlink
     }
 
 def filter_drives(
@@ -160,6 +160,9 @@ def create_route():
         end_house_number: int = int(escape(request.form['end_house_number']))
         end_postal_code: int = int(escape(request.form['end_postal_code']))
         end_place: str = escape(request.form['end_place'])
+        start_address = f"{start_street} {start_house_number} {start_postal_code} {start_place}"
+        end_address = f"{end_street} {end_house_number} {end_postal_code} {end_place}"
+        create_drive_map(start_address, end_address)
         drive = Drive(organizer=column_data.name, date=date, time=time, price=price, seat_amount=seats, start_street=start_street, start_house_number=start_house_number, start_postal_code=start_postal_code, start_place=start_place, end_street=end_street, end_house_number=end_house_number, end_postal_code=end_postal_code, end_place=end_place)
         session_db.add(drive)
         session_db.commit()

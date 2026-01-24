@@ -1,5 +1,6 @@
 uv.lock
 node_modules/
+*.png
 data/
 db_test/
 # Byte-compiled / optimized / DLL files
