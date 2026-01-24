@@ -79,12 +79,8 @@ def filter_drives(
     if organizer:
         filters.append(Drive.organizer.ilike(f"%{organizer}%"))  # partial match
     if date:
-        if isinstance(date, str):
-            date = datetime.strptime(date, "%Y-%m-%d").date()
         filters.append(Drive.date == date)
     if time:
-        if isinstance(time, str):
-            time = datetime.strptime(time, "%H:%M").time()
         filters.append(Drive.time == time)
     if price_min is not None:
         filters.append(Drive.price >= price_min)
