@@ -8,6 +8,7 @@ from markupsafe import escape
 from modules.db import User, Drive, Passenger
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import select, update, delete, create_engine, URL, Null, and_
+from sqlalchemy.exc import SQLAlchemyError
 from functools import wraps
 
 url_object = URL.create(
@@ -103,8 +104,6 @@ def filter_drives(
 
     drives = session_db.execute(stmt).scalars().all()
     return drives
-
-    
 
 #----- Routes -----
 @app.route('/')
@@ -361,9 +360,7 @@ def drive_api(id):
 @app.route('/api/passenger/<int:id>', methods=['GET', 'PUT', 'DELETE'])
 @login_required
 def passenger_api(id):
-
     user_name = session['name']
-
     drive = session_db.get(Drive, id)
     if not drive:
         return jsonify({"error": "Drive not found"}), 404
