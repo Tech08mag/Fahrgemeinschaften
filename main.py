@@ -385,15 +385,21 @@ def drive_api(id):
         if not data:
             return jsonify({"error": "No data provided"}), 400
 
-        updatable_fields = ['title', 'date', 'location']  # customize as needed
+    # Whitelisted fields
+        updatable_fields = [
+            'date', 'time', 'price', 'seat_amount',
+            'start_street', 'start_house_number', 'start_postal_code', 'start_place',
+            'end_street', 'end_house_number', 'end_postal_code', 'end_place'
+    ]
+
         for key, value in data.items():
             if key in updatable_fields:
                 setattr(drive, key, value)
 
         try:
-            session_db.commit()
+        # Just flush changes; no commit or update
+            session_db.flush()  # push changes to DB within current transaction
         except Exception as e:
-            session_db.rollback()
             return jsonify({"error": "Database error", "details": str(e)}), 500
 
         return jsonify({
