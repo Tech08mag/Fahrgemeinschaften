@@ -26,13 +26,18 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
+app.config.update(
+    SESSION_COOKIE_SECURE=True,     # Only send cookie over HTTPS
+    SESSION_COOKIE_HTTPONLY=True,   # JS cannot access the cookie (prevents XSS)
+    SESSION_COOKIE_SAMESITE='Lax',  # Prevent CSRF in most cases ('Strict' is stricter)
+)
 
 
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'name' not in session:
-            return redirect(url_for('login'))
+            return jsonify({"error": "Unauthorized"}), 401
         return f(*args, **kwargs)
     return decorated_function
 
@@ -165,7 +170,7 @@ def home():
     for drive in filtered_drives:
         serialize_drive(drive)
     drives_list = filtered_drives
-    return render_template('search.html', drives=drives_list)
+    return render_template('home.html', drives=drives_list)
 
 @app.route('/search', methods=['GET', 'POST'])
 @login_required
@@ -397,8 +402,7 @@ def drive_api(id):
                 setattr(drive, key, value)
 
         try:
-        # Just flush changes; no commit or update
-            session_db.flush()  # push changes to DB within current transaction
+            session_db.flush()  
         except Exception as e:
             return jsonify({"error": "Database error", "details": str(e)}), 500
 

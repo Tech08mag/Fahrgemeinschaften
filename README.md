@@ -35,6 +35,13 @@ PG_HOST=
 FLASK_SECRET_KEY=
 ```
 
+Generate a secure Flask Secret+
+
+```python
+import os
+app.secret_key = os.urandom(32)
+```
+
 For an automatic install of the dependencies and an automatic build and start of the projct you could run: (this works only on debian based distro's):\
 First make the file executable
 
