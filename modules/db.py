@@ -57,6 +57,6 @@ class Passenger(Base):
     def __repr__(self):
         return f"<User(drive_id='{self.drive_id}', passenger_name='{self.passenger_name}'>"
 
-engine = create_engine(url_object, echo=True)
+engine = create_engine(url_object, echo=False)
 Base.metadata.create_all(engine)
 Session: sessionmaker[engine] = sessionmaker(bind=engine)

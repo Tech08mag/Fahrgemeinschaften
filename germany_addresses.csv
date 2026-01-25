@@ -1,0 +1,51 @@
+street,housenumber,postcode,city
+Kurfürstendamm,12,10719,Berlin
+Alexanderplatz,5,10178,Berlin
+Friedrichstrasse,20,10117,Berlin
+Unter den Linden,1,10117,Berlin
+Potsdamer Platz,3,10785,Berlin
+Oranienstrasse,8,10999,Berlin
+Karl-Liebknecht-Strasse,14,10178,Berlin
+Leipziger Strasse,16,10117,Berlin
+Torstrasse,22,10119,Berlin
+Schönhauser Allee,7,10439,Berlin
+Reeperbahn,45,20359,Hamburg
+Mönckebergstrasse,10,20095,Hamburg
+Jungfernstieg,7,20354,Hamburg
+Speersort,15,20095,Hamburg
+Neuer Wall,22,20354,Hamburg
+Hagenbeckstrasse,5,22527,Hamburg
+Deichstrasse,12,20459,Hamburg
+Große Reichenstrasse,18,20457,Hamburg
+Steinstraße,4,20095,Hamburg
+ABC-Strasse,8,20354,Hamburg
+Marienplatz,1,80331,Munich
+Sendlinger Strasse,5,80331,Munich
+Maximilianstrasse,12,80539,Munich
+Leopoldstrasse,8,80802,Munich
+Viktualienmarkt,3,80331,Munich
+Brienner Strasse,6,80333,Munich
+Rosenheimer Strasse,14,81669,Munich
+Landsberger Strasse,20,80339,Munich
+Theresienstrasse,7,80333,Munich
+Isartorplatz,2,80331,Munich
+Hohe Strasse,10,50667,Cologne
+Schildergasse,25,50667,Cologne
+Hahnenstrasse,7,50667,Cologne
+Domkloster,4,50667,Cologne
+Trankgasse,3,50667,Cologne
+Mauritiuswall,12,50670,Cologne
+Eigelstein,8,50668,Cologne
+Appellhofplatz,6,50667,Cologne
+Severinstrasse,18,50678,Cologne
+Venloer Strasse,14,50823,Cologne
+Zeil,15,60313,Frankfurt
+Goetheplatz,2,60313,Frankfurt
+Fressgasse,10,60311,Frankfurt
+Kaiserstrasse,7,60329,Frankfurt
+Kaiserplatz,3,60311,Frankfurt
+Mainzer Landstrasse,12,60325,Frankfurt
+Eschenheimer Anlage,9,60318,Frankfurt
+Große Friedberger Strasse,4,60313,Frankfurt
+Börsenplatz,6,60313,Frankfurt
+Taunusanlage,5,60325,Frankfurt

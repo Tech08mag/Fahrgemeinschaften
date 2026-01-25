@@ -95,9 +95,63 @@ def filter_drives(
 
     if filters:
         stmt = stmt.where(and_(*filters))
-
     drives = session_db.execute(stmt).scalars().all()
     return drives
+
+def add_drive(organizer: str, date: str, time: str, price: float, seat_amount: int, start_street: str, start_house_number: int, start_postal_code: int, start_place: str, end_street: str, end_house_number: int, end_postal_code: int, end_place: str) -> None:
+    drive = Drive(organizer=organizer,
+                  date=date,
+                  time=time,
+                  price=price,
+                  seat_amount=seat_amount,
+                  start_street=start_street,
+                  start_house_number=start_house_number,
+                  start_postal_code=start_postal_code,
+                  start_place=start_place,
+                  end_street=end_street,
+                  end_house_number=end_house_number,
+                  end_postal_code=end_postal_code,
+                  end_place=end_place)
+    session_db.add(drive)
+    session_db.commit()
+
+def add_passenger(drive_id: int, passenger_name: str) -> None:
+    passenger = Passenger(drive_id=drive_id, passenger_name=passenger_name)
+    session_db.add(passenger)
+    session_db.commit()
+    drive = session_db.execute(select(Drive).where(Drive.id_drive == drive_id)).scalar_one_or_none()
+    if drive:
+        drive.seat_amount -= 1
+        session_db.commit()
+
+def login_user(email: str, password: str) -> bool:
+    stmt = select(User).where(User.email.in_([email]))
+    column_data = session_db.execute(stmt).scalar_one_or_none()
+    try:
+        column_data.email
+    except AttributeError:
+        return False
+    else:
+        if verify(column_data.password_hash, password):
+            session['name'] = column_data.name
+            session['email'] = column_data.email
+            return True
+        else:
+            return False
+
+def register_user(username: str, email: str, password: str) -> bool:
+    stmt = select(User).where(User.email.in_([email]))
+    column_data = session_db.execute(stmt).scalar_one_or_none()
+    try:
+        column_data.email
+    except AttributeError:
+        password_hash = hashing(password)
+        user = User(name=username, email=email, password_hash=password_hash)
+        session_db.add(user)
+        session_db.commit()
+        return True
+    else:
+        return False
 
 #----- Routes -----
 @app.route('/')
@@ -107,10 +161,11 @@ def index():
 @app.route('/home', methods=['GET', 'POST'])
 @login_required
 def home():    
-    stmt = select(Drive).where(Drive.organizer != session['name']).limit(5)
-    my_drives = session_db.execute(stmt).scalars().all()
-    my_drives: str = jsonify([serialize_drive(drive) for drive in my_drives]).get_data(as_text=True)
-    return render_template('home.html', my_drives=my_drives)
+    filtered_drives = filter_drives()
+    for drive in filtered_drives:
+        serialize_drive(drive)
+    drives_list = filtered_drives
+    return render_template('search.html', drives=drives_list)
 
 @app.route('/search', methods=['GET', 'POST'])
 @login_required
@@ -126,15 +181,16 @@ def search():
         end_place: str = escape(request.form.get('end_place', ''))
         end_postal_code: str = escape(request.form.get('end_postal_code', ''))
         end_place: str = escape(request.form.get('end_place', ''))
-        filtered_drives = filter_drives(organizer=organizer if organizer else None,
-                      date=date if date else None,
-                      time=time if time else None,
-                      price_min=float(price_min) if price_min else None,
-                      price_max=float(price_max) if price_max else None,
-                        start_postal_code=start_postal_code if start_postal_code else None,
-                        start_place=start_place if start_place else None,
-                        end_postal_code=end_postal_code if end_postal_code else None,
-                        end_place=end_place if end_place else None)
+        filtered_drives = filter_drives(
+                    organizer=organizer if organizer else None,
+                    date=date if date else None,
+                    time=time if time else None,
+                    price_min=float(price_min) if price_min else None,
+                    price_max=float(price_max) if price_max else None,
+                    start_postal_code=start_postal_code if start_postal_code else None,
+                    start_place=start_place if start_place else None,
+                    end_postal_code=end_postal_code if end_postal_code else None,
+                    end_place=end_place if end_place else None)
         for drive in filtered_drives:
             serialize_drive(drive)
         drives_list = filtered_drives
@@ -145,8 +201,6 @@ def search():
 @login_required
 def create_route():
     if request.method == 'POST':
-        stmt = select(User).where(User.email == session['email'])
-        column_data = session_db.execute(stmt).scalar_one_or_none()
         date: str = escape(request.form['date'])
         time: str = escape(request.form['time'])
         price: float = float(escape(request.form['price']))
@@ -164,9 +218,7 @@ def create_route():
         start_address = f"{start_street} {start_house_number} {start_postal_code} {start_place}"
         end_address = f"{end_street} {end_house_number} {end_postal_code} {end_place}"
         create_drive_map(start_address, end_address)
-        drive = Drive(organizer=column_data.name, date=date, time=time, price=price, seat_amount=seats, start_street=start_street, start_house_number=start_house_number, start_postal_code=start_postal_code, start_place=start_place, end_street=end_street, end_house_number=end_house_number, end_postal_code=end_postal_code, end_place=end_place)
-        session_db.add(drive)
-        session_db.commit()
+        add_drive(session['name'], date, time, price, seats, start_street, start_house_number, start_postal_code, start_place, end_street, end_house_number, end_postal_code, end_place)
         flash("Die Fahrt wurde erfolgreich hinzugefügt")
         return render_template('home.html')
     return render_template('create_route.html')
@@ -176,21 +228,10 @@ def login():
     if request.method == 'POST':
         email: str = escape(request.form['email'])
         password: str = escape(request.form['password'])
-        stmt = select(User).where(User.email.in_([email]))
-        column_data = session_db.execute(stmt).scalar_one_or_none()
-        try:
-            column_data.email
-        except AttributeError:
-            flash("User does not exists")
-            return render_template('login.html')
+        if login_user(email, password):
+            return redirect(url_for('home'))
         else:
-            if verify(column_data.password_hash, password):
-                session['email'] = column_data.email
-                session['name'] = column_data.name
-                return redirect(url_for('home'))
-            else:
-                flash("Incorrect password")
-                return render_template('login.html')
+            return render_template('login.html')
     return render_template('login.html')
 
 @app.route('/logout')
@@ -206,16 +247,13 @@ def register():
         email: str = escape(request.form['email'])
         password: str = escape(request.form['password'])
         password2: str = escape(request.form['password2'])
-        if password == password2 and not session_db.execute(select(User).where(User.email == email)).scalar_one_or_none() and not session_db.execute(select(User).where(User.name == username)).scalar_one_or_none():
-            password_hash = hashing(password)
-            user = User(name=username, email=email, password_hash=password_hash)
-            session_db.add(user)
-            session_db.commit()
-            flash("registration successful, please log in")
+        if password != password2:
+            flash("Die Passwörter stimmen nicht überein")
+        if register_user(username, email, password):
+            flash("Die Registrierung war erfolgreich. Du kannst dich jetzt einloggen.")
             return redirect(url_for('login'))
         else:
-            flash("passwords do not match or your email is already in use")
-            return render_template('register.html')
+            flash("Die E-Mail-Adresse ist bereits vergeben.")
     return render_template('register.html')
 
 
@@ -291,7 +329,7 @@ def api_my_drives():
 
 @app.route('/api/drive/passenger/<int:id>', methods=['POST'])
 @login_required
-def add_passenger(id):
+def passengers(id):
     drive = session_db.get(Drive, id)
 
     if session['name'] == drive.organizer:
@@ -301,11 +339,7 @@ def add_passenger(id):
     if session_db.execute(select(Passenger).where(Passenger.drive_id == id, Passenger.passenger_name == session['name'])).scalar_one_or_none():
         return jsonify({"message": "You are already a passenger"}), 300
     else:
-        passenger = Passenger(drive_id=id, passenger_name=session['name'])
-        session_db.add(passenger)
-        session_db.commit()
-        drive.seat_amount -= 1
-        session_db.commit()
+        add_passenger(id, session['name'])
         return jsonify({"status": "success", "message": "Passenger added"}), 200
 
 
@@ -315,8 +349,12 @@ def add_passenger(id):
 def delete_drive(id):
         organizer = session['name']
         stmt = select(Drive).where(Drive.id_drive == id)
-        if session_db.execute(stmt).scalar_one_or_none().organizer == organizer:
-            os.remove(f'static/drive_images/{id}.png')
+        drive = session_db.execute(stmt).scalar_one_or_none()
+        if drive.organizer == organizer:
+            start_address = f"{drive.start_street} {drive.start_house_number} {drive.start_postal_code} {drive.start_place}"
+            end_address = f"{drive.end_street} {drive.end_house_number} {drive.end_postal_code} {drive.end_place}"
+            filename = f"{start_address.replace(' ', '_')}_to_{end_address.replace(' ', '_')}.png"
+            os.remove(f'static/drive_images/{filename}')
             stmt = delete(Drive).where(Drive.id_drive == id)
             session_db.execute(stmt)
             session_db.commit()
@@ -340,16 +378,23 @@ def drive_api(id):
         if not drive:
             return jsonify({"error": "Drive not found"}), 404
 
-        if drive.organizer != session['name']:
+        if drive.organizer != session.get('name'):
             return jsonify({"error": "Unauthorized"}), 403
 
         data = request.get_json()
+        if not data:
+            return jsonify({"error": "No data provided"}), 400
 
+        updatable_fields = ['title', 'date', 'location']  # customize as needed
         for key, value in data.items():
-            if hasattr(drive, key):
+            if key in updatable_fields:
                 setattr(drive, key, value)
 
-        session_db.commit()
+        try:
+            session_db.commit()
+        except Exception as e:
+            session_db.rollback()
+            return jsonify({"error": "Database error", "details": str(e)}), 500
 
         return jsonify({
             "status": "success",

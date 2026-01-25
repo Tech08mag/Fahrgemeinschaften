@@ -35,41 +35,56 @@
 
         <!-- Buttons -->
         <div class="mt-3 flex flex-col sm:flex-row gap-2">
-  <button
-    onclick="addPassenger({{ drive.id_drive }})"
-    class="flex-1 text-xs font-semibold text-white bg-green-600 rounded-md px-3 py-2 border border-green-600 hover:bg-green-700 hover:border-green-700 transition"
-  >
-    Mitfahren
-  </button>
+          <button
+            onclick="addPassenger({{ drive.id_drive }})"
+            class="flex-1 text-xs font-semibold text-white bg-green-600 rounded-md px-3 py-2 border border-green-600 hover:bg-green-700 hover:border-green-700 transition"
+          >
+            Mitfahren
+          </button>
 
-  <button
-    onclick="removePassenger({{ drive.id_drive }})"
-    class="flex-1 text-xs font-semibold text-white bg-red-600 rounded-md px-3 py-2 border border-red-600 hover:bg-red-700 hover:border-red-700 transition"
-  >
-    Nicht mitfahren
-  </button>
-</div>
-
+          <button
+            onclick="removePassenger({{ drive.id_drive }})"
+            class="flex-1 text-xs font-semibold text-white bg-red-600 rounded-md px-3 py-2 border border-red-600 hover:bg-red-700 hover:border-red-700 transition"
+          >
+            Nicht mitfahren
+          </button>
+        </div>
       </div>
 
       <!-- Image on the right -->
-      <div class="flex-shrink-0 w-full lg:w-3/4 h-16 lg:h-auto overflow-hidden py-4 lg:pr-4">
-        <img
-  class="w-full h-64 object-cover rounded-lg"
-  src="{{ url_for(
-    'static',
-    filename='drive_images/' ~
-      drive.start_street|replace(' ', '_') ~ '_' ~
-      drive.start_house_number ~ '_' ~
-      drive.start_postal_code ~ '_' ~
-      drive.start_place|replace(' ', '_') ~
-      '_to_' ~
-      drive.end_street|replace(' ', '_') ~ '_' ~
-      drive.end_house_number ~ '_' ~
-      drive.end_postal_code ~ '_' ~
-      drive.end_place|replace(' ', '_') ~
-      '.png') }}"/>
-        </div>
+      <div class="w-full lg:w-1/2 mx-auto overflow-hidden rounded-lg" id="imageContainer-{{ drive.id_drive }}"></div>
+
+      <script>
+        (function() {
+          const container = document.getElementById('imageContainer-{{ drive.id_drive }}');
+          if (!container) return;
+
+          const img = new Image();
+
+          img.onload = () => {
+            img.className = "w-full h-auto object-cover rounded-lg"; // Tailwind classes
+            container.appendChild(img);
+          };
+
+          img.onerror = () => {
+            // Image does not exist → render nothing
+            console.log("Drive image not found for drive {{ drive.id_drive }}");
+          };
+
+          img.src = "{{ url_for(
+              'static',
+              filename='drive_images/' ~ drive.start_street|replace(' ', '_') ~ '_' ~
+                       drive.start_house_number ~ '_' ~
+                       drive.start_postal_code ~ '_' ~
+                       drive.start_place|replace(' ', '_') ~
+                       '_to_' ~
+                       drive.end_street|replace(' ', '_') ~ '_' ~
+                       drive.end_house_number ~ '_' ~
+                       drive.end_postal_code ~ '_' ~
+                       drive.end_place|replace(' ', '_') ~
+                       '.png') }}";
+        })();
+      </script>
 
     </div>
     {% endfor %}
