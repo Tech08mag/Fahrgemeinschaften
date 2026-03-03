@@ -1,0 +1,210 @@
+{
+  "main": {
+    "id": "5d65e9a66acf53be",
+    "type": "split",
+    "children": [
+      {
+        "id": "dca94639bdf32e54",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "72a767acbed2f799",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Carsharing.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Carsharing"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "0cce8d9e68ea0f30",
+    "type": "mobile-drawer",
+    "children": [
+      {
+        "id": "88b16db3e2ed4a33",
+        "type": "leaf",
+        "state": {
+          "type": "file-explorer",
+          "state": {
+            "sortOrder": "alphabetical",
+            "autoReveal": false
+          },
+          "icon": "lucide-folder-closed",
+          "title": "Dateiexplorer"
+        }
+      },
+      {
+        "id": "a0fa024e817949c9",
+        "type": "leaf",
+        "state": {
+          "type": "search",
+          "state": {
+            "query": "",
+            "matchingCase": false,
+            "explainSearch": false,
+            "collapseAll": false,
+            "extraContext": false,
+            "sortOrder": "alphabetical"
+          },
+          "icon": "lucide-search",
+          "title": "Search"
+        }
+      },
+      {
+        "id": "9de3b9224a9011d9",
+        "type": "leaf",
+        "state": {
+          "type": "tag",
+          "state": {
+            "sortOrder": "frequency",
+            "useHierarchy": true,
+            "showSearch": false,
+            "searchQuery": ""
+          },
+          "icon": "lucide-tags",
+          "title": "Tags"
+        }
+      },
+      {
+        "id": "d39698fc25be4783",
+        "type": "leaf",
+        "state": {
+          "type": "all-properties",
+          "state": {
+            "sortOrder": "frequency",
+            "showSearch": false,
+            "searchQuery": ""
+          },
+          "icon": "lucide-archive",
+          "title": "All properties"
+        }
+      },
+      {
+        "id": "4b578ac2ee3efc89",
+        "type": "leaf",
+        "state": {
+          "type": "bookmarks",
+          "state": {},
+          "icon": "lucide-bookmark",
+          "title": "Bookmarks"
+        }
+      }
+    ],
+    "currentTab": 0
+  },
+  "right": {
+    "id": "12f8a9d742424979",
+    "type": "mobile-drawer",
+    "children": [
+      {
+        "id": "3ccf3aa93608577d",
+        "type": "leaf",
+        "state": {
+          "type": "backlink",
+          "state": {
+            "file": "Netflix Algorithmus zur Filmzuordnung.md",
+            "collapseAll": false,
+            "extraContext": false,
+            "sortOrder": "alphabetical",
+            "showSearch": false,
+            "searchQuery": "",
+            "backlinkCollapsed": false,
+            "unlinkedCollapsed": true
+          },
+          "icon": "links-coming-in",
+          "title": "Rückverweise"
+        }
+      },
+      {
+        "id": "28bc6cef3dfaed3d",
+        "type": "leaf",
+        "state": {
+          "type": "outgoing-link",
+          "state": {
+            "file": "Carsharing.md",
+            "linksCollapsed": false,
+            "unlinkedCollapsed": true
+          },
+          "icon": "links-going-out",
+          "title": "Outgoing links"
+        }
+      },
+      {
+        "id": "b459acfe80324a61",
+        "type": "leaf",
+        "state": {
+          "type": "outline",
+          "state": {
+            "file": "Carsharing.md",
+            "followCursor": false,
+            "showSearch": false,
+            "searchQuery": ""
+          },
+          "icon": "lucide-list",
+          "title": "Outline"
+        }
+      },
+      {
+        "id": "b3222391c355123f",
+        "type": "leaf",
+        "state": {
+          "type": "git-view",
+          "state": {},
+          "icon": "git-pull-request",
+          "title": "Source Control"
+        }
+      }
+    ],
+    "currentTab": 3
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Schnellauswahl öffnen": false,
+      "graph:Graph-Ansicht öffnen": false,
+      "canvas:Neuen Canvas erstellen": false,
+      "daily-notes:Heutige Notiz öffnen": false,
+      "templates:Vorlage einfügen": false,
+      "command-palette:Befehlspalette öffnen": false,
+      "bases:Neue Base erstellen": false,
+      "obsidian-excalidraw-plugin:New drawing": false,
+      "obsidian-git:Open Git source control": false
+    }
+  },
+  "active": "72a767acbed2f799",
+  "lastOpenFiles": [
+    "README.md",
+    "project-preview/edit_drive.png",
+    "Netflix Algorithmus zur Filmzuordnung.md",
+    "pyproject.toml",
+    "package.json",
+    "docker-compose.yml",
+    "setup.sh",
+    "main.py",
+    "modules/passwords.py",
+    "modules/map.py",
+    "modules/db.py",
+    "modules",
+    "dockerfile",
+    "static/images/Fahrgemeinschaften.png",
+    "project-preview/my_drives.png",
+    "project-preview/my_drives_with_test_drive.png",
+    "project-preview/new_drive.png",
+    "project-preview/drive_overview.png",
+    "project-preview/register.png",
+    "project-preview/settings.png",
+    "project-preview/index.png",
+    "project-preview/login.png",
+    "Excalidraw/Drawing 2026-02-09 14.22.40.excalidraw.md",
+    "Carsharing.md"
+  ]
+}

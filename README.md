@@ -17,7 +17,7 @@
 
 ## Tech Stack
 
-- Python with Flask for the backend
+- Python with Flask for the backend and SQLAlchemy for Database querys
 - HTML files with Tailwind Components
 - Postgres Database
 
