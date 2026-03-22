@@ -27,7 +27,7 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv("FLASK_SECRET_KEY")
 app.config.update(
-    SESSION_COOKIE_SECURE=True,     # Only send cookie over HTTPS
+    SESSION_COOKIE_SECURE=False,     # Only send cookie over HTTPS
     SESSION_COOKIE_HTTPONLY=True,   # JS cannot access the cookie (prevents XSS)
     SESSION_COOKIE_SAMESITE='Lax',  # Prevent CSRF in most cases ('Strict' is stricter)
 )
@@ -222,10 +222,14 @@ def create_route():
         end_place: str = escape(request.form['end_place'])
         start_address = f"{start_street} {start_house_number} {start_postal_code} {start_place}"
         end_address = f"{end_street} {end_house_number} {end_postal_code} {end_place}"
-        create_drive_map(start_address, end_address)
-        add_drive(session['name'], date, time, price, seats, start_street, start_house_number, start_postal_code, start_place, end_street, end_house_number, end_postal_code, end_place)
-        flash("Die Fahrt wurde erfolgreich hinzugefügt")
-        return render_template('home.html')
+        try:
+            create_drive_map(start_address, end_address)
+            add_drive(session['name'], date, time, price, seats, start_street, start_house_number, start_postal_code, start_place, end_street, end_house_number, end_postal_code, end_place)
+            flash("Die Fahrt wurde erfolgreich hinzugefügt")
+            return render_template('home.html')
+        except Exception as e:
+            flash("Fehler beim Hinzufügen der Fahrt")
+            return render_template('create_route.html')
     return render_template('create_route.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -378,6 +382,7 @@ def drive_api(id):
             return jsonify({"error": "Drive not found"}), 404
 
         return jsonify(serialize_drive(drive)), 200
+        
     if request.method == 'PUT':
         drive = session_db.get(Drive, id)
         if not drive:
@@ -389,7 +394,6 @@ def drive_api(id):
         data = request.get_json()
         if not data:
             return jsonify({"error": "No data provided"}), 400
-
     # Whitelisted fields
         updatable_fields = [
             'date', 'time', 'price', 'seat_amount',
@@ -401,10 +405,7 @@ def drive_api(id):
             if key in updatable_fields:
                 setattr(drive, key, value)
 
-        try:
-            session_db.flush()  
-        except Exception as e:
-            return jsonify({"error": "Database error", "details": str(e)}), 500
+        session_db.commit()
 
         return jsonify({
             "status": "success",
