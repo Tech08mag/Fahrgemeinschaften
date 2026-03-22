@@ -1,5 +1,7 @@
 .venv
 *.png
+*.csv
+*md
 data/
 db_test/
 # Byte-compiled / optimized / DLL files
