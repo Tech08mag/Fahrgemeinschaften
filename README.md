@@ -35,6 +35,13 @@ PG_HOST=
 FLASK_SECRET_KEY=
 ```
 
+Generate a secure Flask Secret+
+
+```python
+import os
+app.secret_key = os.urandom(32)
+```
+
 For an automatic install of the dependencies and an automatic build and start of the projct you could run: (this works only on debian based distro's):\
 First make the file executable
 
@@ -140,9 +147,8 @@ uv run main.py
 ## To Do
 
 - [ ] automaticly assign users to drives based on their locactions, prefer the users with least detour
-- [ ] generate Image for the route
 - [ ] scedule drives (Monday, Thursday, Saturday) repeate for a period of time
-- [ ] App mit [cordova](https://cordova.apache.org/#getstarted)
+- [ ] App mit [capacitor](https://capacitorjs.com/docs/getting-started)
 - [ ] Open Street Map integration
 - [ ] Untis Integration für automatisch Stunden
 

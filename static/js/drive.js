@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             end_house_number: document.getElementById("end_house_number").value,
             end_postal_code: document.getElementById("end_postal_code").value,
             end_place: document.getElementById("end_place").value,
-            seats: document.getElementById("seats").value,
+            seat_amount: document.getElementById("seats").value,
             price: document.getElementById("price").value
         };
 

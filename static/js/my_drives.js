@@ -28,6 +28,15 @@ async function get_passengers(drive_id) {
 }
 
 getmydrives().then(async (drives) => {
+  if (!drives || drives.length === 0) {
+    const drivesList = document.getElementById('drives-list');
+    drivesList.innerHTML = `
+      <p class="text-gray-500 dark:text-gray-500 italic">
+        Du hast noch keine Fahrten erstellt.
+      </p>
+    `;
+    return;
+  }
   const drivesList = document.getElementById('drives-list');
 
   for (const drive of drives) {
