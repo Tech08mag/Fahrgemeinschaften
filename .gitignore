@@ -1,6 +1,7 @@
 uv.lock
 node_modules/
 *.png
+!Fahrgemeinschaften Emlichheim Logo.png
 data/
 db_test/
 # Byte-compiled / optimized / DLL files
