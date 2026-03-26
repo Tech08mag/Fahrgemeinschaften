@@ -363,7 +363,10 @@ def delete_drive(id):
             start_address = f"{drive.start_street} {drive.start_house_number} {drive.start_postal_code} {drive.start_place}"
             end_address = f"{drive.end_street} {drive.end_house_number} {drive.end_postal_code} {drive.end_place}"
             filename = f"{start_address.replace(' ', '_')}_to_{end_address.replace(' ', '_')}.png"
-            os.remove(f'static/drive_images/{filename}')
+            try:
+                os.remove(f'static/drive_images/{filename}')
+            except Exception:
+                flash("Image to the drive could not be found")
             stmt = delete(Drive).where(Drive.id_drive == id)
             session_db.execute(stmt)
             session_db.commit()
