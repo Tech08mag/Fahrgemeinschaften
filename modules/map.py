@@ -4,7 +4,7 @@ from PIL import ImageDraw, ImageFont
 from staticmap import StaticMap, Line, CircleMarker
 from geopy.geocoders import Nominatim
 
-def create_drive_map(start_address: str, end_address: str, output_dir=None) -> None:
+def create_drive_map(id: int, start_address: str, end_address: str, output_dir=None) -> None:
     """
     Generates a static map image with a driving route between two addresses.
     Saves the image with distance and duration annotated.
@@ -22,7 +22,7 @@ def create_drive_map(start_address: str, end_address: str, output_dir=None) -> N
     save_dir = output_dir or os.path.join(project_root, "static", "drive_images")
     os.makedirs(save_dir, exist_ok=True)
 
-    filename = f"{start_address.replace(' ', '_')}_to_{end_address.replace(' ', '_')}.png"
+    filename = f"{id}.png"
     filepath = os.path.join(save_dir, filename)
 
     # --- Geocode addresses ---
