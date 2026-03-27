@@ -362,7 +362,7 @@ def delete_drive(id):
         drive = session_db.execute(stmt).scalar_one_or_none()
         if drive.organizer == organizer:
             try:
-                os.remove(f'static/drive_images/{id}')
+                os.remove(f'static/drive_images/{id}.png')
             except Exception:
                 flash("Image to the drive could not be found")
             stmt = delete(Drive).where(Drive.id_drive == id)
