@@ -103,7 +103,7 @@ def filter_drives(
     drives = session_db.execute(stmt).scalars().all()
     return drives
 
-def add_drive(organizer: str, date: str, time: str, price: float, seat_amount: int, start_street: str, start_house_number: int, start_postal_code: int, start_place: str, end_street: str, end_house_number: int, end_postal_code: int, end_place: str) -> None:
+def add_drive(organizer: str, date: str, time: str, price: float, seat_amount: int, start_street: str, start_house_number: int, start_postal_code: int, start_place: str, end_street: str, end_house_number: int, end_postal_code: int, end_place: str) -> int:
     drive = Drive(organizer=organizer,
                   date=date,
                   time=time,
@@ -119,6 +119,7 @@ def add_drive(organizer: str, date: str, time: str, price: float, seat_amount: i
                   end_place=end_place)
     session_db.add(drive)
     session_db.commit()
+    return drive.id_drive
 
 def add_passenger(drive_id: int, passenger_name: str) -> None:
     passenger = Passenger(drive_id=drive_id, passenger_name=passenger_name)
@@ -223,8 +224,8 @@ def create_route():
         start_address = f"{start_street} {start_house_number} {start_postal_code} {start_place}"
         end_address = f"{end_street} {end_house_number} {end_postal_code} {end_place}"
         try:
-            create_drive_map(start_address, end_address)
-            add_drive(session['name'], date, time, price, seats, start_street, start_house_number, start_postal_code, start_place, end_street, end_house_number, end_postal_code, end_place)
+            new_drive_id = add_drive(session['name'], date, time, price, seats, start_street, start_house_number, start_postal_code, start_place, end_street, end_house_number, end_postal_code, end_place)
+            create_drive_map(new_drive_id, start_address, end_address)
             flash("Die Fahrt wurde erfolgreich hinzugefügt")
             return render_template('home.html')
         except Exception as e:
@@ -360,11 +361,8 @@ def delete_drive(id):
         stmt = select(Drive).where(Drive.id_drive == id)
         drive = session_db.execute(stmt).scalar_one_or_none()
         if drive.organizer == organizer:
-            start_address = f"{drive.start_street} {drive.start_house_number} {drive.start_postal_code} {drive.start_place}"
-            end_address = f"{drive.end_street} {drive.end_house_number} {drive.end_postal_code} {drive.end_place}"
-            filename = f"{start_address.replace(' ', '_')}_to_{end_address.replace(' ', '_')}.png"
             try:
-                os.remove(f'static/drive_images/{filename}')
+                os.remove(f'static/drive_images/{id}')
             except Exception:
                 flash("Image to the drive could not be found")
             stmt = delete(Drive).where(Drive.id_drive == id)
@@ -480,7 +478,7 @@ def passenger_api(id):
             "status": "success",
             "message": "Passenger added"
         }), 200
-
+        
 @app.route("/api/user/passenger/")
 @login_required
 def get_passenger_drives():

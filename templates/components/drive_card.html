@@ -71,18 +71,7 @@
             console.log("Drive image not found for drive {{ drive.id_drive }}");
           };
 
-          img.src = "{{ url_for(
-              'static',
-              filename='drive_images/' ~ drive.start_street|replace(' ', '_') ~ '_' ~
-                       drive.start_house_number ~ '_' ~
-                       drive.start_postal_code ~ '_' ~
-                       drive.start_place|replace(' ', '_') ~
-                       '_to_' ~
-                       drive.end_street|replace(' ', '_') ~ '_' ~
-                       drive.end_house_number ~ '_' ~
-                       drive.end_postal_code ~ '_' ~
-                       drive.end_place|replace(' ', '_') ~
-                       '.png') }}";
+          img.src = "{{ url_for('static', filename='drive_images/' ~ drive.id_drive ~ '.png') }}";
         })();
       </script>
 
