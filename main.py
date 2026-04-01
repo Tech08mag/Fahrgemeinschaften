@@ -240,7 +240,8 @@ def login():
         password: str = escape(request.form['password'])
         if login_user(email, password):
             return redirect(url_for('home'))
-        else:
+        else:#
+            flash("Falsches Passwort oder falscher Nutzername")
             return render_template('login.html')
     return render_template('login.html')
 

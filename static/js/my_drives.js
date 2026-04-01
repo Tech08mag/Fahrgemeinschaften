@@ -18,18 +18,20 @@ async function get_passengers(drive_id) {
         const response = await fetch(`/api/passenger/${drive_id}`);
         if (response.ok) {
             const data = await response.json();
-            return data.passengers;
+            return data.passengers || [];
         } else {
             throw new Error('Failed to fetch passengers');
         }
     } catch (error) {
         console.error('Error:', error); 
+        return [];
     }
 }
 
 getmydrives().then(async (drives) => {
+  const drivesList = document.getElementById('drives-list');
+
   if (!drives || drives.length === 0) {
-    const drivesList = document.getElementById('drives-list');
     drivesList.innerHTML = `
       <p class="text-gray-500 dark:text-gray-500 italic">
         Du hast noch keine Fahrten erstellt.
@@ -37,15 +39,23 @@ getmydrives().then(async (drives) => {
     `;
     return;
   }
-  const drivesList = document.getElementById('drives-list');
 
   for (const drive of drives) {
     const li = document.createElement('li');
 
-    // fetch passengers (assumed async)
+    // Passagiere laden
     const passengers = await get_passengers(drive.id_drive);
 
-    // build passenger HTML
+    // Zustände
+    const isPassenger = passengers.includes(currentUser);
+    const isOrganizer = currentUser === drive.organizer;
+    const isFull = passengers.length >= drive.seat_amount;
+
+    // Button-Logik
+    const addDisabled = isPassenger || isOrganizer || isFull;
+    const removeDisabled = !isPassenger || isOrganizer;
+
+    // Passenger Anzeige
     const passengersHtml = passengers.length > 0
       ? passengers.map(passenger => `
           <p class="text-gray-600 dark:text-gray-400">
@@ -61,6 +71,46 @@ getmydrives().then(async (drives) => {
         </p>
       `;
 
+    // Buttons
+    const buttonsHtml = `
+      <div class="mt-4 flex gap-2">
+
+        <!-- Mitfahren -->
+        <button
+          ${!addDisabled ? `onclick="addPassenger(${drive.id_drive})"` : 'disabled'}
+          class="text-xs text-white px-3 py-1.5 rounded-md border transition
+          ${!addDisabled 
+            ? 'bg-green-600 border-green-600 hover:bg-green-700' 
+            : 'bg-gray-400 border-gray-400 cursor-not-allowed'}">
+          Mitfahren
+        </button>
+
+        <!-- Nicht mitfahren -->
+        <button
+          ${!removeDisabled ? `onclick="removePassenger(${drive.id_drive})"` : 'disabled'}
+          class="text-xs text-white px-3 py-1.5 rounded-md border transition
+          ${!removeDisabled 
+            ? 'bg-red-600 border-red-600 hover:bg-red-700' 
+            : 'bg-gray-400 border-gray-400 cursor-not-allowed'}">
+          Nicht mitfahren
+        </button>
+
+        <!-- Bearbeiten -->
+        <a href="/drive/${drive.id_drive}"
+          class="inline-block text-xs text-white bg-blue-600 rounded-md px-3 py-1.5 border border-blue-600 hover:bg-blue-700 transition">
+          Bearbeiten
+        </a>
+
+        <!-- Löschen -->
+        <a href="/api/drive/delete/${drive.id_drive}"
+          class="inline-block text-xs text-white bg-red-600 rounded-md px-3 py-1.5 border border-red-600 hover:bg-red-700 transition">
+          Löschen
+        </a>
+
+      </div>
+    `;
+
+    // Card HTML
     li.innerHTML = `
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
         <div class="p-6 space-y-2">
@@ -86,7 +136,6 @@ getmydrives().then(async (drives) => {
             <span class="font-medium text-gray-800 dark:text-gray-200">${drive.organizer}</span>
           </p>
 
-
           <p class="text-gray-600 dark:text-gray-400">
             Plätze: 
             <span class="font-medium text-gray-800 dark:text-gray-200">${drive.seat_amount}</span>
@@ -98,18 +147,7 @@ getmydrives().then(async (drives) => {
           </p>
 
           ${passengersHtml}
-
-          <div class="mt-4 flex gap-2">
-            <a href="/drive/${drive.id_drive}"
-               class="inline-block text-xs text-white bg-blue-600 rounded-md px-3 py-1.5 border border-blue-600 hover:bg-blue-700 transition">
-              Bearbeiten
-            </a>
-
-            <a href="/api/drive/delete/${drive.id_drive}"
-               class="inline-block text-xs text-white bg-red-600 rounded-md px-3 py-1.5 border border-red-600 hover:bg-red-700 transition">
-              Löschen
-            </a>
-          </div>
+          ${buttonsHtml}
         </div>
       </div>
     `;
