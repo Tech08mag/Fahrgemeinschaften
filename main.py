@@ -146,18 +146,21 @@ def login_user(email: str, password: str) -> bool:
             return False
 
 def register_user(username: str, email: str, password: str) -> bool:
+    stmt = select(User).where(User.email.in_([username]))
+    column_username = session_db.execute(stmt).scalar_one_or_none()
     stmt = select(User).where(User.email.in_([email]))
-    column_data = session_db.execute(stmt).scalar_one_or_none()
-    try:
-        column_data.email
-    except AttributeError:
-        password_hash = hashing(password)
-        user = User(name=username, email=email, password_hash=password_hash)
-        session_db.add(user)
-        session_db.commit()
-        return True
+    column_email = session_db.execute(stmt).scalar_one_or_none()
+    if column_username or column_email:
+        flash("Username or Email does exists")
     else:
-        return False
+        try:
+            password_hash = hashing(password)
+            user = User(name=username, email=email, password_hash=password_hash)
+            session_db.add(user)
+            session_db.commit()
+            return True
+        else:
+            return False
 
 #----- Routes -----
 @app.route('/')

@@ -71,7 +71,7 @@ async function deleteDrive(id) {
   document.querySelector(`[data-drive-id="${id}"]`)?.remove();
 
   try {
-    await fetch(`/api/drive/delete/${id}`, { method: 'DELETE' });
+    await fetch(`/api/drive/delete/${id}`, { method: 'GET' });
   } catch (e) {
     console.error(e);
   }
