@@ -159,7 +159,7 @@ def register_user(username: str, email: str, password: str) -> bool:
             session_db.add(user)
             session_db.commit()
             return True
-        else:
+        except Exception as e:
             return False
 
 #----- Routes -----
